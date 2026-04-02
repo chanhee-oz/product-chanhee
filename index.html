@@ -27,13 +27,63 @@
     <!-- Q1: 위치 -->
     <div class="screen" id="screen-q1"></div>
     <!-- Q2: 집 형태 -->
-    <div class="screen" id="screen-q2"></div>
+    <div class="screen" id="screen-q2">
+  <div class="question-card">
+    <div class="question-emoji">🏠</div>
+    <h2>어떤 공간이<br>당신을 품고 있나요?</h2>
+    <div class="options" data-question="houseType">
+      <button class="option-btn" data-value="apartment">🏢 아파트</button>
+      <button class="option-btn" data-value="villa">🏘️ 빌라·다세대</button>
+      <button class="option-btn" data-value="house">🏡 단독주택</button>
+      <button class="option-btn" data-value="officetel">🏙️ 오피스텔</button>
+      <button class="option-btn" data-value="oneroom">🚪 원룸</button>
+    </div>
+  </div>
+</div>
     <!-- Q3: 층수 -->
-    <div class="screen" id="screen-q3"></div>
+    <div class="screen" id="screen-q3">
+  <div class="question-card">
+    <div class="question-emoji">☁️</div>
+    <h2>하늘과 얼마나 가까운 곳에서<br>살고 있나요?</h2>
+    <div class="options" data-question="floor">
+      <button class="option-btn" data-value="low">🌱 땅과 가까워요 (1~3층)</button>
+      <button class="option-btn" data-value="mid">🏙️ 도시를 내려다봐요 (4~10층)</button>
+      <button class="option-btn" data-value="high">☁️ 구름이 가까워요 (11~20층)</button>
+      <button class="option-btn" data-value="sky">✨ 하늘 위에 살아요 (21층+)</button>
+      <button class="option-btn" data-value="unknown">🤷 잘 모르겠어요</button>
+    </div>
+  </div>
+</div>
     <!-- Q4: 방향 -->
-    <div class="screen" id="screen-q4"></div>
+    <div class="screen" id="screen-q4">
+  <div class="question-card">
+    <div class="question-emoji">☀️</div>
+    <h2>아침에 햇살이<br>어디서 들어오나요?</h2>
+    <div class="options" data-question="direction">
+      <button class="option-btn" data-value="east">🌅 동쪽 — 아침 햇살 가득</button>
+      <button class="option-btn" data-value="west">🌇 서쪽 — 노을이 예뻐요</button>
+      <button class="option-btn" data-value="south">☀️ 남쪽 — 하루종일 따뜻해요</button>
+      <button class="option-btn" data-value="north">🌙 북쪽 — 은은한 빛이 좋아요</button>
+      <button class="option-btn" data-value="unknown">🤷 잘 모르겠어요</button>
+    </div>
+  </div>
+</div>
     <!-- Q5: 함께 사는 존재 -->
-    <div class="screen" id="screen-q5"></div>
+    <div class="screen" id="screen-q5">
+  <div class="question-card">
+    <div class="question-emoji">💫</div>
+    <p class="question-context">풍수에서는 공간의 기운이 함께 사는 존재들의 에너지와 섞인다고 해요 🌀</p>
+    <h2>이 공간의 에너지를<br>함께 만드는 존재는?</h2>
+    <div class="options multi" data-question="companion">
+      <button class="option-btn" data-value="alone">🧘 나 홀로 충전 중</button>
+      <button class="option-btn" data-value="partner">💑 파트너와 둘이서</button>
+      <button class="option-btn" data-value="family">👨‍👩‍👧‍👦 아이와 함께 북적북적</button>
+      <button class="option-btn" data-value="roommate">👯 친구·룸메이트와 함께</button>
+      <button class="option-btn" data-value="pet">🐾 반려동물이 함께!</button>
+    </div>
+    <button class="btn-next hidden" id="btn-q5-next">다음으로 →</button>
+  </div>
+</div>
 
     <!-- 로딩 화면 -->
     <div class="screen" id="screen-loading">
