@@ -61,6 +61,135 @@ function goToNextScreen() {
   }
 }
 
+// === Location Data (주요 동네 목록) ===
+const NEIGHBORHOODS = [
+  { name: '서울 강남구 역삼동', region: '서울' },
+  { name: '서울 강남구 삼성동', region: '서울' },
+  { name: '서울 강남구 논현동', region: '서울' },
+  { name: '서울 서초구 서초동', region: '서울' },
+  { name: '서울 서초구 반포동', region: '서울' },
+  { name: '서울 마포구 합정동', region: '서울' },
+  { name: '서울 마포구 망원동', region: '서울' },
+  { name: '서울 마포구 연남동', region: '서울' },
+  { name: '서울 용산구 이태원동', region: '서울' },
+  { name: '서울 용산구 한남동', region: '서울' },
+  { name: '서울 성동구 성수동', region: '서울' },
+  { name: '서울 송파구 잠실동', region: '서울' },
+  { name: '서울 송파구 문정동', region: '서울' },
+  { name: '서울 영등포구 여의도동', region: '서울' },
+  { name: '서울 종로구 종로동', region: '서울' },
+  { name: '서울 중구 명동', region: '서울' },
+  { name: '서울 관악구 신림동', region: '서울' },
+  { name: '서울 노원구 상계동', region: '서울' },
+  { name: '서울 강서구 마곡동', region: '서울' },
+  { name: '서울 동작구 사당동', region: '서울' },
+  { name: '경기 성남시 판교', region: '경기' },
+  { name: '경기 수원시 영통구', region: '경기' },
+  { name: '경기 고양시 일산', region: '경기' },
+  { name: '경기 용인시 수지구', region: '경기' },
+  { name: '경기 화성시 동탄', region: '경기' },
+  { name: '경기 부천시 중동', region: '경기' },
+  { name: '경기 안양시 평촌', region: '경기' },
+  { name: '인천 연수구 송도동', region: '인천' },
+  { name: '인천 남동구 구월동', region: '인천' },
+  { name: '부산 해운대구 해운대', region: '부산' },
+  { name: '부산 수영구 광안동', region: '부산' },
+  { name: '부산 부산진구 서면', region: '부산' },
+  { name: '대구 수성구 범어동', region: '대구' },
+  { name: '대전 유성구 봉명동', region: '대전' },
+  { name: '광주 서구 치평동', region: '광주' },
+  { name: '제주 제주시 연동', region: '제주' },
+];
+
+// === GPS ===
+document.getElementById('btn-gps').addEventListener('click', () => {
+  const btnText = document.querySelector('#btn-gps .location-btn-text');
+  btnText.textContent = '위치를 찾고 있어요...';
+
+  if (!navigator.geolocation) {
+    btnText.textContent = '이 브라우저에서는 위치를 찾을 수 없어요 😢';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=ko`
+        );
+        const data = await res.json();
+        const addr = data.address;
+        const displayName = [addr.city || addr.state, addr.borough || addr.county, addr.suburb || addr.neighbourhood]
+          .filter(Boolean).join(' ');
+
+        setLocation(displayName || '현재 위치', latitude, longitude);
+      } catch {
+        setLocation('현재 위치', latitude, longitude);
+      }
+    },
+    () => {
+      btnText.textContent = '현재 위치로 찾기';
+      alert('위치 접근이 허용되지 않았어요. 동네 이름으로 검색해주세요!');
+    }
+  );
+});
+
+// === Neighborhood Search ===
+const locationInput = document.getElementById('location-input');
+const suggestionsEl = document.getElementById('location-suggestions');
+
+locationInput.addEventListener('input', () => {
+  const query = locationInput.value.trim();
+  if (query.length < 1) {
+    suggestionsEl.classList.add('hidden');
+    return;
+  }
+
+  const matches = NEIGHBORHOODS.filter(n =>
+    n.name.includes(query)
+  ).slice(0, 5);
+
+  if (matches.length === 0) {
+    suggestionsEl.classList.add('hidden');
+    return;
+  }
+
+  suggestionsEl.innerHTML = matches
+    .map(n => `<div class="suggestion-item" data-name="${n.name}">${n.name}</div>`)
+    .join('');
+  suggestionsEl.classList.remove('hidden');
+});
+
+suggestionsEl.addEventListener('click', (e) => {
+  const item = e.target.closest('.suggestion-item');
+  if (!item) return;
+  setLocation(item.dataset.name);
+  suggestionsEl.classList.add('hidden');
+  locationInput.value = '';
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.location-search')) {
+    suggestionsEl.classList.add('hidden');
+  }
+});
+
+// === Set Location ===
+function setLocation(name, lat, lng) {
+  answers.location = { name, lat: lat || null, lng: lng || null };
+  const displayEl = document.getElementById('location-display');
+  displayEl.textContent = `📍 ${name} 근처`;
+  document.getElementById('location-result').classList.remove('hidden');
+}
+
+// === Confirm Location ===
+document.getElementById('btn-location-confirm').addEventListener('click', () => {
+  if (answers.location) {
+    goToNextScreen();
+  }
+});
+
 // === Event: Start Button ===
 document.getElementById('btn-start').addEventListener('click', () => {
   goToScreen('screen-q1');

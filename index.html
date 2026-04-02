@@ -25,7 +25,38 @@
     </div>
 
     <!-- Q1: 위치 -->
-    <div class="screen" id="screen-q1"></div>
+    <div class="screen" id="screen-q1">
+  <div class="question-card">
+    <div class="question-emoji">📍</div>
+    <h2>풍수의 시작은 땅의 기운!<br>어디서 생활하고 있나요?</h2>
+    <p class="question-hint">정확할수록 더 정밀한 풍수를 읽을 수 있어요!<br>하지만 대략적인 위치만으로도 충분해요 😊</p>
+
+    <div class="location-methods">
+      <button class="location-btn" id="btn-gps">
+        <span class="location-btn-icon">📍</span>
+        <span class="location-btn-text">현재 위치로 찾기</span>
+        <span class="location-btn-sub">탭 한 번이면 끝!</span>
+      </button>
+
+      <div class="location-divider"><span>또는</span></div>
+
+      <div class="location-search">
+        <input
+          type="text"
+          id="location-input"
+          placeholder="동네 이름을 입력해보세요 (예: 역삼동, 합정)"
+          autocomplete="off"
+        />
+        <div id="location-suggestions" class="suggestions hidden"></div>
+      </div>
+    </div>
+
+    <div id="location-result" class="location-result hidden">
+      <p id="location-display"></p>
+      <button class="btn-primary" id="btn-location-confirm">이 위치로 할게요! ✨</button>
+    </div>
+  </div>
+</div>
     <!-- Q2: 집 형태 -->
     <div class="screen" id="screen-q2">
   <div class="question-card">
