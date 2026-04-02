@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔮 우리 집 풍수 보기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 프로그레스 바 (인트로에서는 숨김) -->
+    <div id="progress-bar" class="hidden">
+      <div id="progress-fill"></div>
+      <span id="progress-text"></span>
+    </div>
+
+    <!-- 인트로 화면 -->
+    <div class="screen active" id="screen-intro">
+      <div class="intro-content">
+        <div class="intro-emoji">🔮</div>
+        <h1>우리 집에 숨겨진 기운,<br>알고 있나요?</h1>
+        <p class="intro-sub">탭 몇 번이면 끝!<br>풍수로 읽어보는 우리 집 에너지</p>
+        <button class="btn-primary" id="btn-start">우리 집 기운 읽어보기 ✨</button>
+      </div>
+    </div>
+
+    <!-- Q1: 위치 -->
+    <div class="screen" id="screen-q1"></div>
+    <!-- Q2: 집 형태 -->
+    <div class="screen" id="screen-q2"></div>
+    <!-- Q3: 층수 -->
+    <div class="screen" id="screen-q3"></div>
+    <!-- Q4: 방향 -->
+    <div class="screen" id="screen-q4"></div>
+    <!-- Q5: 함께 사는 존재 -->
+    <div class="screen" id="screen-q5"></div>
+
+    <!-- 로딩 화면 -->
+    <div class="screen" id="screen-loading">
+      <div class="loading-content">
+        <div class="loading-emoji">🔮</div>
+        <p id="loading-text">기운을 읽는 중...</p>
+      </div>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div class="screen" id="screen-result"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
