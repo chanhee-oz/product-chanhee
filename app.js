@@ -345,7 +345,127 @@ function showResult() {
   bindShareButtons();
 }
 
-// === Bind Share Buttons (placeholder — completed in Task 6) ===
+// === Bind Share Buttons ===
 function bindShareButtons() {
-  // Will be implemented in Task 6
+  // Save as image
+  document.getElementById('btn-save-image').addEventListener('click', async () => {
+    const card = document.getElementById('result-card');
+    const btn = document.getElementById('btn-save-image');
+    btn.textContent = '이미지 생성 중...';
+
+    try {
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        backgroundColor: '#FAFAFA',
+        useCORS: true,
+      });
+      const link = document.createElement('a');
+      link.download = '나의_풍수지리_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+      btn.textContent = '✅ 저장 완료!';
+      setTimeout(() => { btn.textContent = '📸 결과 카드 저장하기'; }, 2000);
+    } catch {
+      btn.textContent = '📸 결과 카드 저장하기';
+      alert('이미지 저장에 실패했어요. 스크린샷을 이용해주세요!');
+    }
+  });
+
+  // Copy share link
+  document.getElementById('btn-copy-link').addEventListener('click', async () => {
+    const typeId = document.getElementById('screen-result').dataset.typeId;
+    const url = `${window.location.origin}${window.location.pathname}?type=${typeId}`;
+    const btn = document.getElementById('btn-copy-link');
+
+    try {
+      await navigator.clipboard.writeText(url);
+      btn.textContent = '✅ 링크 복사 완료!';
+      setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
+    } catch {
+      const input = document.createElement('input');
+      input.value = url;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      btn.textContent = '✅ 링크 복사 완료!';
+      setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
+    }
+  });
+
+  // Retry
+  document.getElementById('btn-retry').addEventListener('click', () => {
+    answers.location = null;
+    answers.houseType = null;
+    answers.floor = null;
+    answers.direction = null;
+    answers.companion = [];
+
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('btn-q5-next').classList.add('hidden');
+    document.getElementById('location-result').classList.add('hidden');
+    document.getElementById('location-input').value = '';
+    document.querySelector('#btn-gps .location-btn-text').textContent = '현재 위치로 찾기';
+
+    goToScreen('screen-intro');
+  });
 }
+
+// === Handle Shared Link ===
+(function handleSharedLink() {
+  const params = new URLSearchParams(window.location.search);
+  const sharedType = params.get('type');
+
+  if (sharedType && FENGSHUI_TYPES[sharedType]) {
+    const type = FENGSHUI_TYPES[sharedType];
+    const resultEl = document.getElementById('screen-result');
+
+    resultEl.innerHTML = `
+      <div class="result-content" id="result-card">
+        <div class="result-header">
+          <p class="result-label">✨ 친구의 집은...</p>
+          <div class="result-emoji">${type.emoji}</div>
+          <h1 class="result-name">${type.name}</h1>
+          <p class="result-summary">${type.summary}</p>
+          <div class="result-keywords">
+            ${type.keywords.map(k => `<span class="keyword">#${k}</span>`).join(' ')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <h3>📊 풍수 에너지 리딩</h3>
+          <div class="energy-bars">
+            <div class="energy-row">
+              <span class="energy-label">활력</span>
+              <div class="energy-bar"><div class="energy-fill" style="width:${type.energy.vitality}%"></div></div>
+              <span class="energy-value">${type.energy.vitality}%</span>
+            </div>
+            <div class="energy-row">
+              <span class="energy-label">안정</span>
+              <div class="energy-bar"><div class="energy-fill" style="width:${type.energy.stability}%"></div></div>
+              <span class="energy-value">${type.energy.stability}%</span>
+            </div>
+            <div class="energy-row">
+              <span class="energy-label">풍요</span>
+              <div class="energy-bar"><div class="energy-fill" style="width:${type.energy.abundance}%"></div></div>
+              <span class="energy-value">${type.energy.abundance}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="share-section">
+        <button class="btn-primary" id="btn-try-mine" onclick="window.location.href=window.location.pathname">🔮 나도 우리 집 풍수 보기!</button>
+      </div>
+    `;
+
+    document.getElementById('screen-intro').classList.remove('active');
+    resultEl.classList.add('active');
+
+    setTimeout(() => {
+      resultEl.querySelectorAll('.energy-fill').forEach(bar => {
+        bar.style.transition = 'width 1s ease';
+      });
+    }, 400);
+  }
+})();
