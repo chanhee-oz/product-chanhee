@@ -271,7 +271,81 @@ function startLoading() {
   }, 800);
 }
 
-// === Show Result (placeholder — completed in Task 5) ===
+// === Show Result ===
 function showResult() {
+  const result = calculateResult(answers);
+  const { type, energy, explanations } = result;
+
+  const resultEl = document.getElementById('screen-result');
+  resultEl.innerHTML = `
+    <div class="result-content" id="result-card">
+      <div class="result-header">
+        <p class="result-label">✨ 당신의 집은...</p>
+        <div class="result-emoji">${type.emoji}</div>
+        <h1 class="result-name">${type.name}</h1>
+        <p class="result-summary">${type.summary}</p>
+        <div class="result-keywords">
+          ${type.keywords.map(k => `<span class="keyword">#${k}</span>`).join(' ')}
+        </div>
+      </div>
+
+      <div class="result-section">
+        <h3>🧭 어떻게 읽었냐면요...</h3>
+        <div class="explanations">
+          ${explanations.map(e => `<p class="explanation">${e}</p>`).join('')}
+        </div>
+      </div>
+
+      <div class="result-section">
+        <h3>📊 풍수 에너지 리딩</h3>
+        <div class="energy-bars">
+          <div class="energy-row">
+            <span class="energy-label">활력</span>
+            <div class="energy-bar"><div class="energy-fill" style="width:${energy.vitality}%"></div></div>
+            <span class="energy-value">${energy.vitality}%</span>
+          </div>
+          <div class="energy-row">
+            <span class="energy-label">안정</span>
+            <div class="energy-bar"><div class="energy-fill" style="width:${energy.stability}%"></div></div>
+            <span class="energy-value">${energy.stability}%</span>
+          </div>
+          <div class="energy-row">
+            <span class="energy-label">풍요</span>
+            <div class="energy-bar"><div class="energy-fill" style="width:${energy.abundance}%"></div></div>
+            <span class="energy-value">${energy.abundance}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <h3>💡 이 공간의 기운을 더 살리려면?</h3>
+        <div class="tips">
+          ${type.tips.map(t => `<p class="tip">${t}</p>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="share-section">
+      <button class="share-btn" id="btn-save-image">📸 결과 카드 저장하기</button>
+      <button class="share-btn" id="btn-copy-link">🔗 나도 해보기 링크 복사</button>
+      <button class="btn-primary" id="btn-retry">🔮 다시 해보기</button>
+    </div>
+  `;
+
+  resultEl.dataset.typeId = type.id;
+
   goToScreen('screen-result');
+
+  setTimeout(() => {
+    resultEl.querySelectorAll('.energy-fill').forEach(bar => {
+      bar.style.transition = 'width 1s ease';
+    });
+  }, 400);
+
+  bindShareButtons();
+}
+
+// === Bind Share Buttons (placeholder — completed in Task 6) ===
+function bindShareButtons() {
+  // Will be implemented in Task 6
 }
