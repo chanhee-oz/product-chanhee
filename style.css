@@ -539,3 +539,40 @@ body {
 #btn-retry {
   margin-top: 8px;
 }
+
+/* === Responsive: Desktop === */
+@media (min-width: 481px) {
+  body {
+    background: #F0F0F0;
+  }
+
+  #app {
+    background: #FAFAFA;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+  }
+}
+
+/* === Scrollable Result Screen === */
+#screen-result {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* === Accessibility === */
+.option-btn:focus-visible,
+.btn-primary:focus-visible,
+.share-btn:focus-visible {
+  outline: 3px solid #35C5F0;
+  outline-offset: 2px;
+}
+
+/* === Safe Area (노치 대응) === */
+@supports (padding-top: env(safe-area-inset-top)) {
+  #progress-bar {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+
+  .share-section {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
