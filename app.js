@@ -359,7 +359,7 @@ function showResult() {
             return `
               <div class="tip-product-pair">
                 <p class="tip">${t}</p>
-                ${p ? `<a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+                ${p ? `<a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
                   <div class="product-emoji">${p.emoji}</div>
                   <div class="product-info">
                     <span class="product-name">${p.name}</span>
@@ -372,7 +372,7 @@ function showResult() {
           }).join('')}
           ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(type.tips.length).map(p => `
             <div class="tip-product-pair">
-              <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+              <a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
                 <div class="product-emoji">${p.emoji}</div>
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
@@ -620,7 +620,7 @@ function submitFeedback(match, reason) {
           <h3>💡 이런 아이템이 어울린대요</h3>
           <div class="product-cards">
             ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(0, 2).map(p => `
-              <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+              <a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
                 <div class="product-emoji">${p.emoji}</div>
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
