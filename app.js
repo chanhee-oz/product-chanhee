@@ -20,6 +20,30 @@ const screens = [
 
 let currentScreenIndex = 0;
 
+// === Feedback & Share Tracking ===
+const shareTracking = { imageSaved: false, linkCopied: false };
+
+const FEEDBACK_RESPONSES = {
+  more_energetic: '그렇군요! 🔥 활기찬 에너지가 넘치는 공간이라니, 실제로는 더 역동적인 기운이 흐르고 있나봐요. 소중한 의견 고마워요!',
+  more_calm: '그렇군요! 🌙 고요한 에너지가 흐르는 공간이군요. 실제 기운은 숫자보다 깊을 수 있어요. 알려줘서 고마워요!',
+  keywords_mismatch: '음, 공간의 기운은 사는 사람이 가장 잘 느끼는 법이죠! 🧭 더 정확한 풍수 리딩을 만드는 데 큰 도움이 돼요. 고마워요!',
+  tips_mismatch: '맞아요, 같은 유형이라도 집마다 사정이 다르니까요! 🏠 더 맞춤형 팁을 만드는 데 참고할게요. 고마워요!',
+  unknown: '괜찮아요! 느낌이 다르다는 것 자체가 중요한 신호예요 ✨ 알려줘서 고마워요!',
+};
+
+// TODO: Google Form 생성 후 아래 값을 실제 entry ID로 교체
+const GOOGLE_FORM_CONFIG = {
+  formUrl: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse',
+  fields: {
+    type: 'entry.XXXXXXXXX',
+    match: 'entry.XXXXXXXXX',
+    reason: 'entry.XXXXXXXXX',
+    inputs: 'entry.XXXXXXXXX',
+    imageSaved: 'entry.XXXXXXXXX',
+    linkCopied: 'entry.XXXXXXXXX',
+  },
+};
+
 // === Screen Navigation ===
 function goToScreen(targetId) {
   const currentEl = document.getElementById(screens[currentScreenIndex]);
@@ -347,6 +371,15 @@ function showResult() {
       <button class="share-btn" id="btn-copy-link">🔗 나도 해보기 링크 복사</button>
       <button class="btn-primary" id="btn-retry">🔮 다시 해보기</button>
     </div>
+
+    <div class="feedback-section" id="feedback-section">
+      <p class="feedback-question">이 결과, 우리 집이랑 어울려요?</p>
+      <div class="feedback-buttons">
+        <button class="feedback-btn feedback-match" data-feedback="match">😊 맞는 것 같아요!</button>
+        <button class="feedback-btn feedback-mismatch" data-feedback="mismatch">🤔 좀 다른 느낌이에요</button>
+      </div>
+      <div class="feedback-followup hidden" id="feedback-followup"></div>
+    </div>
   `;
 
   resultEl.dataset.typeId = type.id;
@@ -360,6 +393,7 @@ function showResult() {
   }, 400);
 
   bindShareButtons();
+  bindFeedbackButtons();
 }
 
 // === Bind Share Buttons ===
@@ -380,6 +414,7 @@ function bindShareButtons() {
       link.download = '나의_풍수지리_결과.png';
       link.href = canvas.toDataURL();
       link.click();
+      shareTracking.imageSaved = true;
       btn.textContent = '✅ 저장 완료!';
       setTimeout(() => { btn.textContent = '📸 결과 카드 저장하기'; }, 2000);
     } catch {
@@ -396,6 +431,7 @@ function bindShareButtons() {
 
     try {
       await navigator.clipboard.writeText(url);
+      shareTracking.linkCopied = true;
       btn.textContent = '✅ 링크 복사 완료!';
       setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
     } catch {
@@ -405,6 +441,7 @@ function bindShareButtons() {
       input.select();
       document.execCommand('copy');
       document.body.removeChild(input);
+      shareTracking.linkCopied = true;
       btn.textContent = '✅ 링크 복사 완료!';
       setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
     }
@@ -417,6 +454,8 @@ function bindShareButtons() {
     answers.floor = null;
     answers.direction = null;
     answers.companion = [];
+    shareTracking.imageSaved = false;
+    shareTracking.linkCopied = false;
 
     document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('btn-q5-next').classList.add('hidden');
@@ -426,6 +465,93 @@ function bindShareButtons() {
 
     goToScreen('screen-intro');
   });
+}
+
+// === Feedback Handlers ===
+function bindFeedbackButtons() {
+  const section = document.getElementById('feedback-section');
+  const followup = document.getElementById('feedback-followup');
+
+  section.querySelectorAll('.feedback-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const feedback = btn.dataset.feedback;
+      const buttons = section.querySelector('.feedback-buttons');
+      buttons.classList.add('hidden');
+      section.querySelector('.feedback-question').classList.add('hidden');
+
+      if (feedback === 'match') {
+        followup.innerHTML = `
+          <p class="feedback-response">역시! ✨ 친구 집 기운도 궁금하지 않아요?</p>
+          <button class="feedback-share-btn" id="btn-feedback-share">🔗 친구한테 공유하기</button>
+        `;
+        followup.classList.remove('hidden');
+
+        document.getElementById('btn-feedback-share').addEventListener('click', async () => {
+          const typeId = document.getElementById('screen-result').dataset.typeId;
+          const url = `${window.location.origin}${window.location.pathname}?type=${typeId}`;
+          const shareBtn = document.getElementById('btn-feedback-share');
+          try {
+            await navigator.clipboard.writeText(url);
+            shareTracking.linkCopied = true;
+            shareBtn.textContent = '✅ 링크 복사 완료!';
+            setTimeout(() => { shareBtn.textContent = '🔗 친구한테 공유하기'; }, 2000);
+          } catch {
+            const input = document.createElement('input');
+            input.value = url;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            shareTracking.linkCopied = true;
+            shareBtn.textContent = '✅ 링크 복사 완료!';
+            setTimeout(() => { shareBtn.textContent = '🔗 친구한테 공유하기'; }, 2000);
+          }
+        });
+
+        submitFeedback('match', null);
+
+      } else {
+        followup.innerHTML = `
+          <p class="feedback-followup-question">어떤 부분이 좀 다르게 느껴졌어요?</p>
+          <div class="feedback-reasons">
+            <button class="feedback-reason-btn" data-reason="more_energetic">우리 집은 이것보다 더 활기찬 느낌이에요</button>
+            <button class="feedback-reason-btn" data-reason="more_calm">우리 집은 이것보다 더 차분한 느낌이에요</button>
+            <button class="feedback-reason-btn" data-reason="keywords_mismatch">키워드나 설명이 우리 집 분위기랑 달라요</button>
+            <button class="feedback-reason-btn" data-reason="tips_mismatch">팁이 우리 집 상황에 안 맞아요</button>
+            <button class="feedback-reason-btn" data-reason="unknown">그냥 느낌이 다른데 뭔지 모르겠어요</button>
+          </div>
+        `;
+        followup.classList.remove('hidden');
+
+        followup.querySelectorAll('.feedback-reason-btn').forEach(reasonBtn => {
+          reasonBtn.addEventListener('click', () => {
+            const reason = reasonBtn.dataset.reason;
+            followup.innerHTML = `<p class="feedback-response">${FEEDBACK_RESPONSES[reason]}</p>`;
+            submitFeedback('mismatch', reason);
+          });
+        });
+      }
+    });
+  });
+}
+
+// === Google Form Background Submission ===
+function submitFeedback(match, reason) {
+  const typeId = document.getElementById('screen-result').dataset.typeId;
+  const inputCombo = `${answers.direction}_${answers.floor}_${answers.houseType}_${answers.companion.join('+')}`;
+
+  const params = new URLSearchParams();
+  params.set(GOOGLE_FORM_CONFIG.fields.type, typeId);
+  params.set(GOOGLE_FORM_CONFIG.fields.match, match);
+  params.set(GOOGLE_FORM_CONFIG.fields.reason, reason || '');
+  params.set(GOOGLE_FORM_CONFIG.fields.inputs, inputCombo);
+  params.set(GOOGLE_FORM_CONFIG.fields.imageSaved, shareTracking.imageSaved ? 'yes' : 'no');
+  params.set(GOOGLE_FORM_CONFIG.fields.linkCopied, shareTracking.linkCopied ? 'yes' : 'no');
+
+  fetch(`${GOOGLE_FORM_CONFIG.formUrl}?${params.toString()}`, {
+    method: 'GET',
+    mode: 'no-cors',
+  }).catch(() => {});
 }
 
 // === Handle Shared Link ===

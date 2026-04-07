@@ -623,6 +623,113 @@ body {
   margin-top: 8px;
 }
 
+/* === Feedback Section === */
+.feedback-section {
+  width: 100%;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #F0F0F0;
+  text-align: center;
+}
+
+.feedback-question {
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.feedback-btn {
+  flex: 1;
+  padding: 14px 12px;
+  border: 2px solid #E5E5E5;
+  border-radius: 12px;
+  background: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.feedback-btn:active {
+  transform: scale(0.97);
+}
+
+.feedback-match:hover,
+.feedback-match:active {
+  border-color: #35C5F0;
+  background: #F0FBFF;
+}
+
+.feedback-mismatch:hover,
+.feedback-mismatch:active {
+  border-color: #FFB74D;
+  background: #FFF8F0;
+}
+
+.feedback-followup-question {
+  font-size: 15px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 14px;
+}
+
+.feedback-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feedback-reason-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #E5E5E5;
+  border-radius: 12px;
+  background: white;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.feedback-reason-btn:active {
+  transform: scale(0.98);
+  border-color: #35C5F0;
+  background: #F0FBFF;
+}
+
+.feedback-response {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  padding: 16px;
+  background: #F0FBFF;
+  border-radius: 12px;
+}
+
+.feedback-share-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #35C5F0;
+  border-radius: 12px;
+  background: white;
+  font-size: 16px;
+  color: #35C5F0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.feedback-share-btn:active {
+  transform: scale(0.97);
+  background: #F0FBFF;
+}
+
 /* === Responsive: Desktop === */
 @media (min-width: 481px) {
   body {
