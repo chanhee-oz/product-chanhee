@@ -31,16 +31,15 @@ const FEEDBACK_RESPONSES = {
   unknown: '괜찮아요! 느낌이 다르다는 것 자체가 중요한 신호예요 ✨ 알려줘서 고마워요!',
 };
 
-// TODO: Google Form 생성 후 아래 값을 실제 entry ID로 교체
 const GOOGLE_FORM_CONFIG = {
-  formUrl: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse',
+  formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdHDApxr8qptWGzkcLOLz_walaNGbN6CaYI2t-wyy2rDDe1ow/formResponse',
   fields: {
-    type: 'entry.XXXXXXXXX',
-    match: 'entry.XXXXXXXXX',
-    reason: 'entry.XXXXXXXXX',
-    inputs: 'entry.XXXXXXXXX',
-    imageSaved: 'entry.XXXXXXXXX',
-    linkCopied: 'entry.XXXXXXXXX',
+    type: 'entry.994498201',
+    match: 'entry.2010720290',
+    reason: 'entry.1005571380',
+    inputs: 'entry.1542243994',
+    imageSaved: 'entry.127003980',
+    linkCopied: 'entry.1688816715',
   },
 };
 
