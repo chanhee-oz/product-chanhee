@@ -401,8 +401,22 @@ function showResult() {
     </div>
 
     <div class="share-section">
+      <p class="share-label">친구에게 공유하기</p>
+      <div class="share-row">
+        <button class="share-icon-btn" id="btn-share-kakao" title="카카오톡">
+          <span class="share-icon">💬</span>
+          <span class="share-icon-label">카카오톡</span>
+        </button>
+        <button class="share-icon-btn" id="btn-share-x" title="X (트위터)">
+          <span class="share-icon">𝕏</span>
+          <span class="share-icon-label">X</span>
+        </button>
+        <button class="share-icon-btn" id="btn-copy-link" title="링크 복사">
+          <span class="share-icon">🔗</span>
+          <span class="share-icon-label">링크 복사</span>
+        </button>
+      </div>
       <button class="share-btn" id="btn-save-image">📸 결과 카드 저장하기</button>
-      <button class="share-btn" id="btn-copy-link">🔗 나도 해보기 링크 복사</button>
       <button class="btn-primary" id="btn-retry">🔮 다시 해보기</button>
     </div>
 
@@ -457,29 +471,70 @@ function bindShareButtons() {
     }
   });
 
-  // Copy share link
-  document.getElementById('btn-copy-link').addEventListener('click', async () => {
+  // Share URL helper
+  function getShareUrl() {
     const typeId = document.getElementById('screen-result').dataset.typeId;
-    const url = `${window.location.origin}${window.location.pathname}?type=${typeId}`;
-    const btn = document.getElementById('btn-copy-link');
+    return `${window.location.origin}${window.location.pathname}?type=${typeId}`;
+  }
 
+  function getShareText() {
+    const typeName = document.querySelector('.result-name')?.textContent || '풍수 결과';
+    return `🔮 우리 집은 "${typeName}"이래요! 당신의 집은?`;
+  }
+
+  // KakaoTalk share
+  document.getElementById('btn-share-kakao').addEventListener('click', () => {
+    shareTracking.linkCopied = true;
+    if (window.Kakao && Kakao.isInitialized()) {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '🔮 우리 집 풍수 보기',
+          description: getShareText(),
+          imageUrl: 'https://ohou.se/images/icon_ohouse.png',
+          link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() },
+        },
+        buttons: [{ title: '나도 해보기', link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() } }],
+      });
+    } else {
+      // SDK 미로드 시 링크 복사 fallback
+      copyToClipboard(getShareUrl());
+      const label = document.querySelector('#btn-share-kakao .share-icon-label');
+      label.textContent = '링크 복사됨!';
+      setTimeout(() => { label.textContent = '카카오톡'; }, 2000);
+    }
+  });
+
+  // X (Twitter) share
+  document.getElementById('btn-share-x').addEventListener('click', () => {
+    shareTracking.linkCopied = true;
+    const text = encodeURIComponent(getShareText());
+    const url = encodeURIComponent(getShareUrl());
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=550,height=420');
+  });
+
+  // Copy link
+  document.getElementById('btn-copy-link').addEventListener('click', async () => {
+    shareTracking.linkCopied = true;
+    const label = document.querySelector('#btn-copy-link .share-icon-label');
+    await copyToClipboard(getShareUrl());
+    label.textContent = '복사 완료!';
+    setTimeout(() => { label.textContent = '링크 복사'; }, 2000);
+  });
+
+  // Clipboard helper
+  async function copyToClipboard(text) {
     try {
-      await navigator.clipboard.writeText(url);
-      shareTracking.linkCopied = true;
-      btn.textContent = '✅ 링크 복사 완료!';
-      setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
+      await navigator.clipboard.writeText(text);
     } catch {
       const input = document.createElement('input');
-      input.value = url;
+      input.value = text;
       document.body.appendChild(input);
       input.select();
       document.execCommand('copy');
       document.body.removeChild(input);
-      shareTracking.linkCopied = true;
-      btn.textContent = '✅ 링크 복사 완료!';
-      setTimeout(() => { btn.textContent = '🔗 나도 해보기 링크 복사'; }, 2000);
     }
-  });
+  }
 
   // Retry
   document.getElementById('btn-retry').addEventListener('click', () => {
