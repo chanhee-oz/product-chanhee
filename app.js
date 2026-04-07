@@ -130,7 +130,11 @@ document.getElementById('btn-gps').addEventListener('click', () => {
   btnText.textContent = '위치를 찾고 있어요...';
 
   if (!navigator.geolocation) {
-    btnText.textContent = '이 브라우저에서는 위치를 찾을 수 없어요 😢';
+    const btnIcon = document.querySelector('#btn-gps .location-btn-icon');
+    const btnSub = document.querySelector('#btn-gps .location-btn-sub');
+    btnText.textContent = '위치를 찾지 못했어요';
+    btnIcon.textContent = '🙈';
+    btnSub.textContent = '아래에서 동네 이름으로 검색해주세요!';
     return;
   }
 
@@ -151,9 +155,17 @@ document.getElementById('btn-gps').addEventListener('click', () => {
         setLocation('현재 위치', latitude, longitude);
       }
     },
-    () => {
-      btnText.textContent = '현재 위치로 찾기';
-      alert('위치 접근이 허용되지 않았어요. 동네 이름으로 검색해주세요!');
+    (err) => {
+      const btnIcon = document.querySelector('#btn-gps .location-btn-icon');
+      const btnSub = document.querySelector('#btn-gps .location-btn-sub');
+      btnText.textContent = '위치를 찾지 못했어요';
+      btnIcon.textContent = '🙈';
+      btnSub.textContent = '아래에서 동네 이름으로 검색해주세요!';
+      setTimeout(() => {
+        btnText.textContent = '현재 위치로 찾기';
+        btnIcon.textContent = '📍';
+        btnSub.textContent = '탭 한 번이면 끝!';
+      }, 3000);
     }
   );
 });

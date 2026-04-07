@@ -82,6 +82,10 @@ body {
 }
 
 /* === Intro Screen === */
+#screen-intro {
+  background: linear-gradient(180deg, #F0FBFF 0%, #FAFAFA 50%, #FFF8F0 100%);
+}
+
 .intro-content {
   text-align: center;
   padding: 40px 0;
@@ -125,7 +129,6 @@ body {
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
   width: 100%;
-  max-width: 320px;
 }
 
 .btn-primary:active {
