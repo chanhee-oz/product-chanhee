@@ -241,11 +241,57 @@ document.querySelectorAll('.options:not(.multi) .option-btn').forEach(btn => {
 
     answers[questionKey] = btn.dataset.value;
 
-    // 단독주택 선택 시 층수 질문 스킵 (1~3층 자동 설정)
+    // 단독주택 선택 시 층수 화면에 확인 메시지 표시
     if (questionKey === 'houseType' && btn.dataset.value === 'house') {
       answers.floor = 'low';
-      setTimeout(() => goToScreen('screen-q4'), 400);
+      setTimeout(() => {
+        goToScreen('screen-q3');
+        const q3Card = document.querySelector('#screen-q3 .question-card');
+        const options = q3Card.querySelector('.options');
+        const emoji = q3Card.querySelector('.question-emoji');
+        const h2 = q3Card.querySelector('h2');
+        emoji.textContent = '🏡';
+        h2.innerHTML = '단독주택이시면<br>땅과 가까운 저층이시겠네요?';
+        options.innerHTML = `
+          <button class="option-btn option-split selected" data-value="low" style="pointer-events:none;"><span class="option-emoji">🌱</span><span class="option-text">땅과 가까워요 (1~3층)</span></button>
+          <button class="option-btn option-split house-confirm-btn" data-value="confirm"><span class="option-emoji">👍</span><span class="option-text">맞아요! 다음으로</span></button>
+          <button class="option-btn option-split house-change-btn" data-value="change"><span class="option-emoji">🔄</span><span class="option-text">아니요, 다시 선택할게요</span></button>
+        `;
+        options.dataset.question = 'floor';
+        q3Card.querySelector('.house-confirm-btn').addEventListener('click', () => {
+          setTimeout(() => goToScreen('screen-q4'), 300);
+        });
+        q3Card.querySelector('.house-change-btn').addEventListener('click', () => {
+          answers.houseType = null;
+          answers.floor = null;
+          document.querySelector('#screen-q2 .options').querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+          emoji.textContent = '☁️';
+          h2.innerHTML = '하늘과 얼마나 가까운 곳에서<br>살고 있나요?';
+          options.innerHTML = `
+            <button class="option-btn option-split" data-value="low"><span class="option-emoji">🌱</span><span class="option-text">땅과 가까워요 (1~3층)</span></button>
+            <button class="option-btn option-split" data-value="mid"><span class="option-emoji">🏙️</span><span class="option-text">도시를 내려다봐요 (4~10층)</span></button>
+            <button class="option-btn option-split" data-value="high"><span class="option-emoji">☁️</span><span class="option-text">구름이 가까워요 (11~20층)</span></button>
+            <button class="option-btn option-split" data-value="sky"><span class="option-emoji">✨</span><span class="option-text">하늘 위에 살아요 (21층+)</span></button>
+            <button class="option-btn option-split" data-value="unknown"><span class="option-emoji">🤷</span><span class="option-text">잘 모르겠어요</span></button>
+          `;
+          rebindQ3Options();
+          goToScreen('screen-q2');
+        });
+      }, 400);
       return;
+    }
+
+    // Q3 옵션 재바인딩 (단독주택 → 다시 선택 시)
+    function rebindQ3Options() {
+      document.querySelectorAll('#screen-q3 .options:not(.multi) .option-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const opts = b.closest('.options');
+          opts.querySelectorAll('.option-btn').forEach(x => x.classList.remove('selected'));
+          b.classList.add('selected');
+          answers[opts.dataset.question] = b.dataset.value;
+          setTimeout(() => goToNextScreen(), 400);
+        });
+      });
     }
 
     setTimeout(() => goToNextScreen(), 400);
