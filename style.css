@@ -453,15 +453,36 @@ body {
 }
 
 .location-result {
-  margin-top: 24px;
+  margin-top: 16px;
   text-align: center;
+  background: #F0FBFF;
+  border-radius: 12px;
+  padding: 16px;
 }
 
 .location-result p {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #35C5F0;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+}
+
+.btn-location-confirm {
+  width: 100%;
+  background: white;
+  border: 2px solid #35C5F0;
+  color: #35C5F0;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-location-confirm:active {
+  background: #E8F8FF;
+  transform: scale(0.97);
 }
 
 /* === Result Screen === */

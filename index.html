@@ -46,7 +46,12 @@
         <span class="location-btn-sub">탭 한 번이면 끝!</span>
       </button>
 
-      <div class="location-divider"><span>또는</span></div>
+      <div id="location-result" class="location-result hidden">
+        <p id="location-display"></p>
+        <button class="btn-location-confirm" id="btn-location-confirm">이 위치로 할게요! ✨</button>
+      </div>
+
+      <div class="location-divider"><span>또는 직접 검색</span></div>
 
       <div class="location-search">
         <input
@@ -57,11 +62,6 @@
         />
         <div id="location-suggestions" class="suggestions hidden"></div>
       </div>
-    </div>
-
-    <div id="location-result" class="location-result hidden">
-      <p id="location-display"></p>
-      <button class="btn-primary" id="btn-location-confirm">이 위치로 할게요! ✨</button>
     </div>
   </div>
 </div>

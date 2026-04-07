@@ -241,6 +241,13 @@ document.querySelectorAll('.options:not(.multi) .option-btn').forEach(btn => {
 
     answers[questionKey] = btn.dataset.value;
 
+    // 단독주택 선택 시 층수 질문 스킵 (1~3층 자동 설정)
+    if (questionKey === 'houseType' && btn.dataset.value === 'house') {
+      answers.floor = 'low';
+      setTimeout(() => goToScreen('screen-q4'), 400);
+      return;
+    }
+
     setTimeout(() => goToNextScreen(), 400);
   });
 });
