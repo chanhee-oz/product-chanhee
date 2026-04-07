@@ -233,14 +233,14 @@ const DEMO_PRODUCTS = [
   {
     name: '생화같은 튤립 조화 10P 화병 세트',
     price: '9,900원',
-    image: 'https://image.ohou.se/i/bucketplace-v2-development/uploads/goods/seo/277476/goods_detail_277476.jpg',
+    image: 'https://image.ohou.se/image/central_crop/bucketplace-v2-development/uploads-productions-164747533706495163.jpg/2560/2560',
     productUrl: 'https://store.ohou.se/goods/277476',
     story: '공간에 생기를 불어넣는 튤립이 풍수 에너지를 한층 밝게 만들어요',
   },
   {
     name: '브렐로 LED 인테리어 무드등 테이블램프',
     price: '44,900원',
-    image: 'https://image.ohou.se/i/bucketplace-v2-development/uploads/goods/seo/3213320/goods_detail_3213320.jpg',
+    image: 'https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-311980547129344.jpg?w=640&h=640&c=c',
     productUrl: 'https://store.ohou.se/goods/3213320',
     story: '은은한 빛이 공간의 기운을 따뜻하게 감싸줘요',
   },
