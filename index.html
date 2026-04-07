@@ -22,23 +22,27 @@
     <div class="screen active" id="screen-intro">
       <div class="intro-content">
         <div class="intro-emoji">🔮</div>
+        <div class="intro-sub-emojis">
+          <span>🌿</span><span>✨</span><span>🏠</span>
+        </div>
         <h1>우리 집에 숨겨진 기운,<br>알고 있나요?</h1>
         <p class="intro-sub">탭 몇 번이면 끝!<br>풍수로 읽어보는 우리 집 에너지</p>
         <button class="btn-primary" id="btn-start">우리 집 기운 읽어보기 ✨</button>
+        <p class="intro-social-proof">30초면 끝! · 50,000명이 해봤어요</p>
       </div>
     </div>
 
     <!-- Q1: 위치 -->
     <div class="screen" id="screen-q1">
   <div class="question-card">
-    <div class="question-emoji">📍</div>
+    <div class="question-emoji">🗺️</div>
     <h2>풍수의 시작은 땅의 기운!<br>어디서 생활하고 있나요?</h2>
     <p class="question-hint">정확할수록 더 정밀한 풍수를 읽을 수 있어요!<br>하지만 대략적인 위치만으로도 충분해요 😊</p>
 
     <div class="location-methods">
-      <button class="location-btn" id="btn-gps">
+      <button class="location-btn location-btn-cta" id="btn-gps">
         <span class="location-btn-icon">📍</span>
-        <span class="location-btn-text">현재 위치로 찾기</span>
+        <span class="location-btn-text">현재 위치로 바로 찾기</span>
         <span class="location-btn-sub">탭 한 번이면 끝!</span>
       </button>
 
@@ -67,11 +71,11 @@
     <div class="question-emoji">🏠</div>
     <h2>어떤 공간이<br>당신을 품고 있나요?</h2>
     <div class="options" data-question="houseType">
-      <button class="option-btn" data-value="apartment">🏢 아파트</button>
-      <button class="option-btn" data-value="villa">🏘️ 빌라·다세대</button>
-      <button class="option-btn" data-value="house">🏡 단독주택</button>
-      <button class="option-btn" data-value="officetel">🏙️ 오피스텔</button>
-      <button class="option-btn" data-value="oneroom">🚪 원룸</button>
+      <button class="option-btn option-split" data-value="apartment"><span class="option-emoji">🏢</span><span class="option-text">아파트</span></button>
+      <button class="option-btn option-split" data-value="villa"><span class="option-emoji">🏘️</span><span class="option-text">빌라·다세대</span></button>
+      <button class="option-btn option-split" data-value="house"><span class="option-emoji">🏡</span><span class="option-text">단독주택</span></button>
+      <button class="option-btn option-split" data-value="officetel"><span class="option-emoji">🏙️</span><span class="option-text">오피스텔</span></button>
+      <button class="option-btn option-split" data-value="oneroom"><span class="option-emoji">🚪</span><span class="option-text">원룸</span></button>
     </div>
   </div>
 </div>
@@ -81,11 +85,11 @@
     <div class="question-emoji">☁️</div>
     <h2>하늘과 얼마나 가까운 곳에서<br>살고 있나요?</h2>
     <div class="options" data-question="floor">
-      <button class="option-btn" data-value="low">🌱 땅과 가까워요 (1~3층)</button>
-      <button class="option-btn" data-value="mid">🏙️ 도시를 내려다봐요 (4~10층)</button>
-      <button class="option-btn" data-value="high">☁️ 구름이 가까워요 (11~20층)</button>
-      <button class="option-btn" data-value="sky">✨ 하늘 위에 살아요 (21층+)</button>
-      <button class="option-btn" data-value="unknown">🤷 잘 모르겠어요</button>
+      <button class="option-btn option-split" data-value="low"><span class="option-emoji">🌱</span><span class="option-text">땅과 가까워요 (1~3층)</span></button>
+      <button class="option-btn option-split" data-value="mid"><span class="option-emoji">🏙️</span><span class="option-text">도시를 내려다봐요 (4~10층)</span></button>
+      <button class="option-btn option-split" data-value="high"><span class="option-emoji">☁️</span><span class="option-text">구름이 가까워요 (11~20층)</span></button>
+      <button class="option-btn option-split" data-value="sky"><span class="option-emoji">✨</span><span class="option-text">하늘 위에 살아요 (21층+)</span></button>
+      <button class="option-btn option-split" data-value="unknown"><span class="option-emoji">🤷</span><span class="option-text">잘 모르겠어요</span></button>
     </div>
   </div>
 </div>
@@ -95,11 +99,11 @@
     <div class="question-emoji">☀️</div>
     <h2>아침에 햇살이<br>어디서 들어오나요?</h2>
     <div class="options" data-question="direction">
-      <button class="option-btn" data-value="east">🌅 동쪽 — 아침 햇살 가득</button>
-      <button class="option-btn" data-value="west">🌇 서쪽 — 노을이 예뻐요</button>
-      <button class="option-btn" data-value="south">☀️ 남쪽 — 하루종일 따뜻해요</button>
-      <button class="option-btn" data-value="north">🌙 북쪽 — 은은한 빛이 좋아요</button>
-      <button class="option-btn" data-value="unknown">🤷 잘 모르겠어요</button>
+      <button class="option-btn option-split" data-value="east"><span class="option-emoji">🌅</span><span class="option-text">동쪽 — 아침 햇살 가득</span></button>
+      <button class="option-btn option-split" data-value="west"><span class="option-emoji">🌇</span><span class="option-text">서쪽 — 노을이 예뻐요</span></button>
+      <button class="option-btn option-split" data-value="south"><span class="option-emoji">☀️</span><span class="option-text">남쪽 — 하루종일 따뜻해요</span></button>
+      <button class="option-btn option-split" data-value="north"><span class="option-emoji">🌙</span><span class="option-text">북쪽 — 은은한 빛이 좋아요</span></button>
+      <button class="option-btn option-split" data-value="unknown"><span class="option-emoji">🤷</span><span class="option-text">잘 모르겠어요</span></button>
     </div>
   </div>
 </div>
@@ -110,11 +114,11 @@
     <p class="question-context">풍수에서는 공간의 기운이 함께 사는 존재들의 에너지와 섞인다고 해요 🌀</p>
     <h2>이 공간의 에너지를<br>함께 만드는 존재는?</h2>
     <div class="options multi" data-question="companion">
-      <button class="option-btn" data-value="alone">🧘 나 홀로 충전 중</button>
-      <button class="option-btn" data-value="partner">💑 파트너와 둘이서</button>
-      <button class="option-btn" data-value="family">👨‍👩‍👧‍👦 아이와 함께 북적북적</button>
-      <button class="option-btn" data-value="roommate">👯 친구·룸메이트와 함께</button>
-      <button class="option-btn" data-value="pet">🐾 반려동물이 함께!</button>
+      <button class="option-btn option-split" data-value="alone"><span class="option-emoji">🧘</span><span class="option-text">나 홀로 충전 중</span></button>
+      <button class="option-btn option-split" data-value="partner"><span class="option-emoji">💑</span><span class="option-text">파트너와 둘이서</span></button>
+      <button class="option-btn option-split" data-value="family"><span class="option-emoji">👨‍👩‍👧‍👦</span><span class="option-text">아이와 함께 북적북적</span></button>
+      <button class="option-btn option-split" data-value="roommate"><span class="option-emoji">👯</span><span class="option-text">친구·룸메이트와 함께</span></button>
+      <button class="option-btn option-split" data-value="pet"><span class="option-emoji">🐾</span><span class="option-text">반려동물이 함께!</span></button>
     </div>
     <button class="btn-next hidden" id="btn-q5-next">다음으로 →</button>
   </div>
