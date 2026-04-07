@@ -325,6 +325,23 @@ function showResult() {
       </div>
     </div>
 
+    <div class="product-section">
+      <h3>🛒 이 기운을 살려줄 아이템</h3>
+      <p class="product-section-sub">풍수 에너지에 어울리는 오늘의집 아이템이에요</p>
+      <div class="product-cards">
+        ${(PRODUCT_RECOMMENDATIONS[type.id] || []).map(p => `
+          <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+            <div class="product-emoji">${p.emoji}</div>
+            <div class="product-info">
+              <span class="product-name">${p.name}</span>
+              <p class="product-story">${p.story}</p>
+            </div>
+            <span class="product-arrow">→</span>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+
     <div class="share-section">
       <button class="share-btn" id="btn-save-image">📸 결과 카드 저장하기</button>
       <button class="share-btn" id="btn-copy-link">🔗 나도 해보기 링크 복사</button>
