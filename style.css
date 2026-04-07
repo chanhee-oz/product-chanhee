@@ -573,6 +573,15 @@ body {
   box-shadow: 0 2px 8px rgba(53, 197, 240, 0.12);
 }
 
+.product-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #F0F0F0;
+}
+
 .product-emoji {
   font-size: 32px;
   flex-shrink: 0;
@@ -587,6 +596,14 @@ body {
   font-size: 15px;
   font-weight: 600;
   color: #222;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #35C5F0;
   display: block;
   margin-bottom: 4px;
 }

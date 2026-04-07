@@ -359,10 +359,11 @@ function showResult() {
             return `
               <div class="tip-product-pair">
                 <p class="tip">${t}</p>
-                ${p ? `<a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
-                  <div class="product-emoji">${p.emoji}</div>
+                ${p ? `<a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
+                  <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
                   <div class="product-info">
                     <span class="product-name">${p.name}</span>
+                    <span class="product-price">${p.price}</span>
                     <p class="product-story">${p.story}</p>
                   </div>
                   <span class="product-arrow">→</span>
@@ -372,10 +373,11 @@ function showResult() {
           }).join('')}
           ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(type.tips.length).map(p => `
             <div class="tip-product-pair">
-              <a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
-                <div class="product-emoji">${p.emoji}</div>
+              <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
+                <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
+                  <span class="product-price">${p.price}</span>
                   <p class="product-story">${p.story}</p>
                 </div>
                 <span class="product-arrow">→</span>
@@ -620,10 +622,11 @@ function submitFeedback(match, reason) {
           <h3>💡 이런 아이템이 어울린대요</h3>
           <div class="product-cards">
             ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(0, 2).map(p => `
-              <a class="product-card" href="https://ohou.se/search/index?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
-                <div class="product-emoji">${p.emoji}</div>
+              <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
+                <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
+                  <span class="product-price">${p.price}</span>
                   <p class="product-story">${p.story}</p>
                 </div>
                 <span class="product-arrow">→</span>

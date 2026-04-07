@@ -227,68 +227,28 @@ const COMPANION_MODIFIERS = {
 };
 
 // === Product Recommendations per Type ===
-const PRODUCT_RECOMMENDATIONS = {
-  sunrise: [
-    { emoji: '🌿', name: '몬스테라 화분', story: '동쪽의 성장 기운과 초록 식물의 생명력이 만나면, 아침마다 새로운 에너지가 솟아나요', query: '몬스테라' },
-    { emoji: '💡', name: '내추럴 스탠드 조명', story: '떠오르는 태양의 집에는 따뜻한 자연광을 닮은 조명이 활력을 더해줘요', query: '스탠드조명' },
-    { emoji: '🪴', name: '미니 허브 화분', story: '성장의 기운을 가진 공간에 허브를 두면, 향기로운 에너지가 하루를 깨워줘요', query: '허브화분' },
-  ],
-  water: [
-    { emoji: '🫧', name: '유리 꽃병', story: '흐르는 물의 기운을 담은 투명한 꽃병이 풍요의 에너지를 순환시켜요', query: '유리꽃병' },
-    { emoji: '🐚', name: '자개 트레이', story: '물의 기운과 조개의 에너지가 만나 소통과 풍요를 더해줘요', query: '자개트레이' },
-    { emoji: '🌊', name: '블루 쿠션', story: '물결을 닮은 블루 톤이 공간의 유연한 기운을 한층 살려줘요', query: '블루쿠션' },
-  ],
-  mountain: [
-    { emoji: '🪨', name: '도자기 오브제', story: '산의 든든한 기운을 닮은 도자기가 공간의 안정감을 더해줘요', query: '도자기오브제' },
-    { emoji: '🧡', name: '울 러그', story: '대지의 에너지를 품은 따뜻한 러그가 가족을 보호하는 기운을 강화해요', query: '울러그' },
-    { emoji: '🕯️', name: '소이캔들', story: '산의 고요한 기운 속에서 은은한 불빛이 신뢰의 에너지를 밝혀줘요', query: '소이캔들' },
-  ],
-  moon: [
-    { emoji: '🕯️', name: '아로마 캔들', story: '달의 고요한 기운과 은은한 향이 만나 깊은 회복의 시간을 만들어요', query: '아로마캔들' },
-    { emoji: '🌙', name: '무드등', story: '달빛을 닮은 부드러운 조명이 평온한 기운을 공간에 채워줘요', query: '무드등' },
-    { emoji: '🧘', name: '명상 쿠션', story: '고요한 달의 공간에서 명상 쿠션은 직관의 에너지를 깨워줘요', query: '명상쿠션' },
-  ],
-  fire: [
-    { emoji: '🎨', name: '레드 포인트 쿠션', story: '불꽃의 열정을 담은 붉은 소품이 창의 에너지를 활활 타오르게 해요', query: '레드쿠션' },
-    { emoji: '🪴', name: '선인장 화분', story: '불의 기운 속에서도 꿋꿋한 선인장이 열정에 안정감을 더해줘요', query: '선인장화분' },
-    { emoji: '💡', name: '데스크 램프', story: '집중의 불꽃을 밝히는 조명이 창작 에너지를 극대화해요', query: '데스크램프' },
-  ],
-  forest: [
-    { emoji: '🪴', name: '행잉 플랜트', story: '숲의 치유 기운을 닮은 늘어지는 식물이 공간을 자연으로 채워줘요', query: '행잉플랜트' },
-    { emoji: '🪵', name: '우드 트레이', story: '나무의 에너지가 숲의 집에서 성찰과 재생의 기운을 강화해요', query: '우드트레이' },
-    { emoji: '🌿', name: '디퓨저', story: '숲속 향기를 머금은 디퓨저가 치유의 에너지를 깊게 만들어줘요', query: '디퓨저' },
-  ],
-  wind: [
-    { emoji: '🌬️', name: '린넨 커튼', story: '바람에 살랑이는 린넨이 새로운 가능성의 기운을 실어다줘요', query: '린넨커튼' },
-    { emoji: '🎐', name: '모빌', story: '바람에 움직이는 모빌이 공간의 자유로운 에너지를 활성화해요', query: '인테리어모빌' },
-    { emoji: '🪶', name: '패브릭 포스터', story: '가벼운 패브릭이 바람길의 변화와 모험의 기운을 담아줘요', query: '패브릭포스터' },
-  ],
-  fertile: [
-    { emoji: '🍽️', name: '도자기 그릇 세트', story: '풍요로운 식탁을 완성하는 그릇이 결실과 나눔의 기운을 더해요', query: '도자기그릇세트' },
-    { emoji: '💛', name: '펜던트 조명', story: '따뜻한 빛이 모이는 곳에 풍요의 에너지가 배로 커져요', query: '펜던트조명' },
-    { emoji: '🌻', name: '화병 + 생화', story: '옥토의 결실을 상징하는 꽃이 풍요로운 기운을 한가득 채워줘요', query: '꽃병' },
-  ],
-  star: [
-    { emoji: '✨', name: '크리스탈 무드등', story: '별빛처럼 반짝이는 크리스탈이 영감과 꿈의 에너지를 증폭시켜요', query: '크리스탈무드등' },
-    { emoji: '🪞', name: '벽걸이 거울', story: '빛을 반사하는 거울이 별빛의 무한한 가능성을 공간에 퍼뜨려요', query: '벽걸이거울' },
-    { emoji: '📖', name: '북엔드', story: '별빛 아래 책을 펼치는 공간이 영감의 에너지를 모아줘요', query: '북엔드' },
-  ],
-  mist: [
-    { emoji: '💙', name: '블루 오브제', story: '새벽안개의 신비로운 기운을 닮은 블루 톤이 직관을 깨워줘요', query: '블루인테리어소품' },
-    { emoji: '🧘', name: '요가 매트', story: '안개 속 고요함과 함께하는 명상이 숨겨진 잠재력을 일깨워요', query: '요가매트' },
-    { emoji: '🌫️', name: '가습기', story: '안개처럼 부드러운 수증기가 공간의 잠재 에너지를 촉촉하게 채워줘요', query: '미니가습기' },
-  ],
-  stone: [
-    { emoji: '⚓', name: '스톤 오브제', story: '돌의 견고한 기운을 닮은 소품이 흔들리지 않는 안정감을 줘요', query: '스톤오브제' },
-    { emoji: '🔆', name: '테이블 램프', story: '따뜻한 불빛이 견고한 돌의 공간에 온기를 더해줘요', query: '테이블램프' },
-    { emoji: '🪴', name: '다육이 화분', story: '돌 틈에서도 자라는 다육이처럼, 인내의 기운이 결실을 맺어요', query: '다육이화분' },
-  ],
-  spring: [
-    { emoji: '🌷', name: '튤립 조화', story: '봄의 설렘을 담은 꽃이 새로운 시작의 에너지를 피워올려요', query: '튤립조화' },
-    { emoji: '🎀', name: '파스텔 쿠션', story: '봄바람처럼 가벼운 파스텔 톤이 희망의 기운을 살려줘요', query: '파스텔쿠션' },
-    { emoji: '🌸', name: '체리블라썸 디퓨저', story: '벚꽃 향기가 봄의 새로운 에너지를 공간 가득 퍼뜨려줘요', query: '체리블라썸디퓨저' },
-  ],
-};
+// productUrl은 store.ohou.se/goods/{id} 형식
+// TODO: 각 풍수 유형에 맞는 실제 상품으로 개별 교체 예정 (현재는 데모용 2개 상품 공통 적용)
+const DEMO_PRODUCTS = [
+  {
+    name: '생화같은 튤립 조화 10P 화병 세트',
+    price: '9,900원',
+    image: 'https://image.ohou.se/i/bucketplace-v2-development/uploads/goods/seo/277476/goods_detail_277476.jpg',
+    productUrl: 'https://store.ohou.se/goods/277476',
+    story: '공간에 생기를 불어넣는 튤립이 풍수 에너지를 한층 밝게 만들어요',
+  },
+  {
+    name: '브렐로 LED 인테리어 무드등 테이블램프',
+    price: '44,900원',
+    image: 'https://image.ohou.se/i/bucketplace-v2-development/uploads/goods/seo/3213320/goods_detail_3213320.jpg',
+    productUrl: 'https://store.ohou.se/goods/3213320',
+    story: '은은한 빛이 공간의 기운을 따뜻하게 감싸줘요',
+  },
+];
+
+const PRODUCT_RECOMMENDATIONS = Object.fromEntries(
+  Object.keys(FENGSHUI_TYPES).map(typeId => [typeId, DEMO_PRODUCTS])
+);
 
 function calculateResult(answers) {
   const mapKey = `${answers.direction}_${answers.floor}`;
