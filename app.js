@@ -270,14 +270,20 @@ document.getElementById('btn-q5-next').addEventListener('click', () => {
 // === Loading Animation ===
 function startLoading() {
   const loadingText = document.getElementById('loading-text');
+  const loadingDots = document.getElementById('loading-dots');
   const messages = [
     '🔮 기운을 읽는 중...',
-    '🌿 공간의 에너지를 분석하고 있어요...',
+    '🧭 방위의 에너지를 확인하고 있어요...',
+    '🌿 공간의 기운을 분석하고 있어요...',
+    '🏠 집의 형태와 조화를 살펴보는 중...',
     '✨ 거의 다 됐어요!',
   ];
 
   let i = 0;
   loadingText.textContent = messages[0];
+  if (loadingDots) loadingDots.innerHTML = messages.map((_, idx) =>
+    `<span class="loading-dot${idx === 0 ? ' active' : ''}"></span>`
+  ).join('');
 
   const interval = setInterval(() => {
     i++;
@@ -286,12 +292,17 @@ function startLoading() {
       setTimeout(() => {
         loadingText.textContent = messages[i];
         loadingText.style.opacity = '1';
+        if (loadingDots) {
+          loadingDots.querySelectorAll('.loading-dot').forEach((dot, idx) => {
+            dot.classList.toggle('active', idx <= i);
+          });
+        }
       }, 200);
     } else {
       clearInterval(interval);
       showResult();
     }
-  }, 800);
+  }, 1000);
 }
 
 // === Show Result ===
@@ -342,26 +353,36 @@ function showResult() {
 
       <div class="result-section">
         <h3>💡 이 공간의 기운을 더 살리려면?</h3>
-        <div class="tips">
-          ${type.tips.map(t => `<p class="tip">${t}</p>`).join('')}
-        </div>
-      </div>
-    </div>
-
-    <div class="product-section">
-      <h3>🛒 이 기운을 살려줄 아이템</h3>
-      <p class="product-section-sub">풍수 에너지에 어울리는 오늘의집 아이템이에요</p>
-      <div class="product-cards">
-        ${(PRODUCT_RECOMMENDATIONS[type.id] || []).map(p => `
-          <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
-            <div class="product-emoji">${p.emoji}</div>
-            <div class="product-info">
-              <span class="product-name">${p.name}</span>
-              <p class="product-story">${p.story}</p>
+        <div class="tips-and-products">
+          ${type.tips.map((t, i) => {
+            const p = (PRODUCT_RECOMMENDATIONS[type.id] || [])[i];
+            return `
+              <div class="tip-product-pair">
+                <p class="tip">${t}</p>
+                ${p ? `<a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+                  <div class="product-emoji">${p.emoji}</div>
+                  <div class="product-info">
+                    <span class="product-name">${p.name}</span>
+                    <p class="product-story">${p.story}</p>
+                  </div>
+                  <span class="product-arrow">→</span>
+                </a>` : ''}
+              </div>
+            `;
+          }).join('')}
+          ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(type.tips.length).map(p => `
+            <div class="tip-product-pair">
+              <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+                <div class="product-emoji">${p.emoji}</div>
+                <div class="product-info">
+                  <span class="product-name">${p.name}</span>
+                  <p class="product-story">${p.story}</p>
+                </div>
+                <span class="product-arrow">→</span>
+              </a>
             </div>
-            <span class="product-arrow">→</span>
-          </a>
-        `).join('')}
+          `).join('')}
+        </div>
       </div>
     </div>
 
@@ -594,9 +615,26 @@ function submitFeedback(match, reason) {
             </div>
           </div>
         </div>
+
+        <div class="result-section">
+          <h3>💡 이런 아이템이 어울린대요</h3>
+          <div class="product-cards">
+            ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(0, 2).map(p => `
+              <a class="product-card" href="https://ohou.se/search?query=${encodeURIComponent(p.query)}" target="_blank" rel="noopener">
+                <div class="product-emoji">${p.emoji}</div>
+                <div class="product-info">
+                  <span class="product-name">${p.name}</span>
+                  <p class="product-story">${p.story}</p>
+                </div>
+                <span class="product-arrow">→</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
       </div>
 
-      <div class="share-section">
+      <div class="shared-cta">
+        <p class="shared-cta-text">🤔 우리 집 기운은 어떨까?</p>
         <button class="btn-primary" id="btn-try-mine" onclick="window.location.href=window.location.pathname">🔮 나도 우리 집 풍수 보기!</button>
       </div>
     `;
