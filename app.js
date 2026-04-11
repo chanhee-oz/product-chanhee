@@ -399,7 +399,7 @@ function startLoading() {
 // === Show Result ===
 function showResult() {
   const result = calculateResult(answers);
-  const { type, energy, explanations } = result;
+  const { type, energy, explanations, bonusProducts } = result;
 
   const resultEl = document.getElementById('screen-result');
   resultEl.innerHTML = `
@@ -466,6 +466,18 @@ function showResult() {
             <div class="tip-product-pair">
               <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
                 ${p.image ? `<img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div class="product-info">
+                  <span class="product-name">${p.name}</span>
+                  <span class="product-price">${p.price}</span>
+                  <p class="product-story">${p.story}</p>
+                </div>
+                <span class="product-arrow">→</span>
+              </a>
+            </div>
+          `).join('')}
+          ${(bonusProducts || []).map(p => `
+            <div class="tip-product-pair">
+              <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
                   <span class="product-price">${p.price}</span>

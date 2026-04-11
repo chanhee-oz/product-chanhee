@@ -216,6 +216,8 @@ const HOUSE_OVERRIDES = {
   'house_family': 'mountain',
   'house_pet': 'forest',
   'oneroom_alone': 'moon',
+  'apartment_family': 'mountain',
+  'villa_family': 'fertile',
 };
 
 const COMPANION_MODIFIERS = {
@@ -296,9 +298,9 @@ function calculateResult(answers) {
   answers.companion.forEach(c => {
     const mod = COMPANION_MODIFIERS[c];
     if (mod) {
-      energy.vitality = Math.min(100, Math.max(0, energy.vitality + mod.vitality));
-      energy.stability = Math.min(100, Math.max(0, energy.stability + mod.stability));
-      energy.abundance = Math.min(100, Math.max(0, energy.abundance + mod.abundance));
+      energy.vitality = Math.min(100, Math.max(50, energy.vitality + mod.vitality));
+      energy.stability = Math.min(100, Math.max(50, energy.stability + mod.stability));
+      energy.abundance = Math.min(100, Math.max(50, energy.abundance + mod.abundance));
     }
   });
 
@@ -309,5 +311,24 @@ function calculateResult(answers) {
     ...answers.companion.map(c => COMPANION_EXPLANATIONS[c]),
   ];
 
-  return { type, energy, explanations };
+  // companion 기반 보조 상품 추천
+  const bonusProducts = [];
+  if (answers.companion.includes('pet')) {
+    bonusProducts.push({
+      name: '반려동물 인테리어 용품',
+      price: '인기 상품 보기',
+      productUrl: 'https://ohou.se/search/index?query=%EB%B0%98%EB%A0%A4%EB%8F%99%EB%AC%BC+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4&utm_source=fengshui&utm_campaign=' + typeId,
+      story: '반려동물과 함께하는 공간의 기운을 더 조화롭게 🐾',
+    });
+  }
+  if (answers.companion.includes('family')) {
+    bonusProducts.push({
+      name: '안전한 키즈 인테리어',
+      price: '인기 상품 보기',
+      productUrl: 'https://ohou.se/search/index?query=%ED%82%A4%EC%A6%88+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4+%EC%95%88%EC%A0%84&utm_source=fengshui&utm_campaign=' + typeId,
+      story: '가족이 함께하는 공간을 더 안전하고 따뜻하게 👨‍👩‍👧‍👦',
+    });
+  }
+
+  return { type, energy, explanations, bonusProducts };
 }
