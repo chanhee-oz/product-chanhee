@@ -227,28 +227,58 @@ const COMPANION_MODIFIERS = {
 };
 
 // === Product Recommendations per Type ===
-// productUrl은 store.ohou.se/goods/{id} 형식
-// TODO: 각 풍수 유형에 맞는 실제 상품으로 개별 교체 예정 (현재는 데모용 2개 상품 공통 적용)
-const DEMO_PRODUCTS = [
-  {
-    name: '생화같은 튤립 조화 10P 화병 세트',
-    price: '9,900원',
-    image: 'https://image.ohou.se/image/central_crop/bucketplace-v2-development/uploads-productions-164747533706495163.jpg/2560/2560',
-    productUrl: 'https://store.ohou.se/goods/277476',
-    story: '공간에 생기를 불어넣는 튤립이 풍수 에너지를 한층 밝게 만들어요',
-  },
-  {
-    name: '브렐로 LED 인테리어 무드등 테이블램프',
-    price: '44,900원',
-    image: 'https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-311980547129344.jpg?w=640&h=640&c=c',
-    productUrl: 'https://store.ohou.se/goods/3213320',
-    story: '은은한 빛이 공간의 기운을 따뜻하게 감싸줘요',
-  },
-];
-
-const PRODUCT_RECOMMENDATIONS = Object.fromEntries(
-  Object.keys(FENGSHUI_TYPES).map(typeId => [typeId, DEMO_PRODUCTS])
-);
+// 오늘의집 검색 URL 기반 — 항상 최신 상품 노출, 품절/이미지 깨짐 없음
+// productUrl: ohou.se/search/index?query=... (CLAUDE.md 규칙 준수)
+const PRODUCT_RECOMMENDATIONS = {
+  sunrise: [
+    { name: '미니 그린 식물 화분', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%AF%B8%EB%8B%88%ED%99%94%EB%B6%84+%EC%8B%9D%EB%AC%BC&utm_source=fengshui&utm_campaign=sunrise', story: '초록 생기가 아침 에너지를 한층 밝게 만들어요 🌿' },
+    { name: '밝은 톤 쿠션·패브릭', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%B0%9D%EC%9D%80+%EC%BF%A0%EC%85%98&utm_source=fengshui&utm_campaign=sunrise', story: '밝은 색감이 성장의 기운을 증폭시켜요 ☀️' },
+  ],
+  water: [
+    { name: '유리 화병·플라워 베이스', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%9C%A0%EB%A6%AC+%ED%99%94%EB%B3%91&utm_source=fengshui&utm_campaign=water', story: '투명한 유리가 풍요의 기운 흐름을 부드럽게 해요 💧' },
+    { name: '라운드 인테리어 소품', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%9D%BC%EC%9A%B4%EB%93%9C+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4&utm_source=fengshui&utm_campaign=water', story: '둥근 형태가 소통과 순환의 에너지를 만들어요 🫧' },
+  ],
+  mountain: [
+    { name: '도자기·세라믹 오브제', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%8F%84%EC%9E%90%EA%B8%B0+%EC%98%A4%EB%B8%8C%EC%A0%9C&utm_source=fengshui&utm_campaign=mountain', story: '묵직한 도자기가 안정의 기운을 단단하게 해요 🪨' },
+    { name: '따뜻한 톤 거실 러그', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EA%B1%B0%EC%8B%A4+%EB%9F%AC%EA%B7%B8+%EC%9B%9C&utm_source=fengshui&utm_campaign=mountain', story: '따뜻한 러그가 보호의 에너지를 감싸줘요 🧡' },
+  ],
+  moon: [
+    { name: '간접 조명·무드등', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%AC%B4%EB%93%9C%EB%93%B1+%EA%B0%84%EC%A0%91%EC%A1%B0%EB%AA%85&utm_source=fengshui&utm_campaign=moon', story: '은은한 빛이 회복의 에너지를 깊게 해요 🕯️' },
+    { name: '아로마 디퓨저·캔들', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%94%94%ED%93%A8%EC%A0%80+%EC%BA%94%EB%93%A4&utm_source=fengshui&utm_campaign=moon', story: '향이 공간의 치유 기운을 깨워줘요 🌿' },
+  ],
+  fire: [
+    { name: '레드·오렌지 포인트 소품', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%A0%88%EB%93%9C+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4+%EC%86%8C%ED%92%88&utm_source=fengshui&utm_campaign=fire', story: '붉은 색이 창의와 열정의 불꽃을 지펴요 🎨' },
+    { name: '아트 포스터·프린트 액자', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%95%84%ED%8A%B8+%ED%8F%AC%EC%8A%A4%ED%84%B0+%EC%95%A1%EC%9E%90&utm_source=fengshui&utm_campaign=fire', story: '에너지 넘치는 작품이 영감을 자극해요 🔥' },
+  ],
+  forest: [
+    { name: '반려 식물·플랜테리어', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%B0%98%EB%A0%A4%EC%8B%9D%EB%AC%BC+%ED%94%8C%EB%9E%9C%ED%85%8C%EB%A6%AC%EC%96%B4&utm_source=fengshui&utm_campaign=forest', story: '식물이 숲의 치유 에너지를 더 풍성하게 해요 🪴' },
+    { name: '우드 소재 인테리어', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%9A%B0%EB%93%9C+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4+%EC%86%8C%ED%92%88&utm_source=fengshui&utm_campaign=forest', story: '나무 소재가 자연의 재생 에너지를 불러와요 🪵' },
+  ],
+  wind: [
+    { name: '쉬어 커튼·린넨 커튼', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%89%AC%EC%96%B4%EC%BB%A4%ED%8A%BC+%EB%A6%B0%EB%84%A8&utm_source=fengshui&utm_campaign=wind', story: '바람에 살랑이는 커튼이 기운의 순환을 도와요 🌬️' },
+    { name: '모빌·윈드차임', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%AA%A8%EB%B9%8C+%EC%9C%88%EB%93%9C%EC%B0%A8%EC%9E%84&utm_source=fengshui&utm_campaign=wind', story: '움직이는 소품이 자유의 에너지를 만들어요 🎐' },
+  ],
+  fertile: [
+    { name: '조화·플라워 데코', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%A1%B0%ED%99%94+%ED%94%8C%EB%9D%BC%EC%9B%8C+%EB%8D%B0%EC%BD%94&utm_source=fengshui&utm_campaign=fertile', story: '꽃과 열매가 풍요의 기운을 가득 채워요 🍎' },
+    { name: '식탁 조명·펜던트', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%8B%9D%ED%83%81+%EC%A1%B0%EB%AA%85+%ED%8E%9C%EB%8D%98%ED%8A%B8&utm_source=fengshui&utm_campaign=fertile', story: '따뜻한 빛 아래 모이는 곳에 결실의 에너지가 쌓여요 💛' },
+  ],
+  star: [
+    { name: '데스크 조명·스탠드', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%8D%B0%EC%8A%A4%ED%81%AC+%EC%A1%B0%EB%AA%85+%EC%8A%A4%ED%83%A0%EB%93%9C&utm_source=fengshui&utm_campaign=star', story: '집중의 빛이 영감과 가능성을 비춰줘요 📖' },
+    { name: '골드·실버 인테리어 소품', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EA%B3%A8%EB%93%9C+%EC%8B%A4%EB%B2%84+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4&utm_source=fengshui&utm_campaign=star', story: '반짝이는 소재가 별빛 에너지를 증폭시켜요 ✨' },
+  ],
+  mist: [
+    { name: '블루 계열 인테리어', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EB%B8%94%EB%A3%A8+%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4+%EC%86%8C%ED%92%88&utm_source=fengshui&utm_campaign=mist', story: '블루 톤이 직관의 에너지를 깨워줘요 💙' },
+    { name: '요가·명상 용품', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%9A%94%EA%B0%80+%EB%AA%85%EC%83%81+%EB%A7%A4%ED%8A%B8&utm_source=fengshui&utm_campaign=mist', story: '고요한 시간이 잠재력을 깨우는 열쇠예요 🧘' },
+  ],
+  stone: [
+    { name: '스톤·마블 오브제', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%EC%8A%A4%ED%86%A4+%EB%A7%88%EB%B8%94+%EC%98%A4%EB%B8%8C%EC%A0%9C&utm_source=fengshui&utm_campaign=stone', story: '무게감 있는 소품이 안정의 기운을 굳건히 해요 ⚓' },
+    { name: '따뜻한 톤 테이블 조명', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%ED%85%8C%EC%9D%B4%EB%B8%94+%EC%A1%B0%EB%AA%85+%EC%9B%9C&utm_source=fengshui&utm_campaign=stone', story: '따뜻한 빛이 견고함 속에 온기를 더해요 🔆' },
+  ],
+  spring: [
+    { name: '튤립·벚꽃 조화', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%ED%8A%A4%EB%A6%BD+%EB%B2%9A%EA%BD%83+%EC%A1%B0%ED%99%94&utm_source=fengshui&utm_campaign=spring', story: '꽃이 봄의 설렘 에너지를 한층 살려줘요 🌷' },
+    { name: '파스텔 패브릭 소품', price: '인기 상품 보기', productUrl: 'https://ohou.se/search/index?query=%ED%8C%8C%EC%8A%A4%ED%85%94+%EC%BF%A0%EC%85%98+%ED%8C%A8%EB%B8%8C%EB%A6%AD&utm_source=fengshui&utm_campaign=spring', story: '가벼운 패브릭이 새로움의 에너지를 더해요 🎀' },
+  ],
+};
 
 function calculateResult(answers) {
   const mapKey = `${answers.direction}_${answers.floor}`;

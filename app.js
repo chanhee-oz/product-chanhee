@@ -76,6 +76,11 @@ function goToScreen(targetId) {
   }, 250);
 
   currentScreenIndex = targetIndex;
+
+  // Analytics: 화면 전환 트래킹
+  if (window.FengshuiAnalytics) {
+    window.FengshuiAnalytics.trackScreenView(targetId);
+  }
 }
 
 function goToNextScreen() {
@@ -151,8 +156,15 @@ document.getElementById('btn-gps').addEventListener('click', () => {
           .filter(Boolean).join(' ');
 
         setLocation(displayName || '현재 위치', latitude, longitude);
+        // Analytics: GPS 성공
+        if (window.FengshuiAnalytics) {
+          window.FengshuiAnalytics.trackLocationMethod('gps', displayName);
+        }
       } catch {
         setLocation('현재 위치', latitude, longitude);
+        if (window.FengshuiAnalytics) {
+          window.FengshuiAnalytics.trackLocationMethod('gps', '현재 위치');
+        }
       }
     },
     (err) => {
@@ -202,6 +214,10 @@ suggestionsEl.addEventListener('click', (e) => {
   setLocation(item.dataset.name);
   suggestionsEl.classList.add('hidden');
   locationInput.value = '';
+  // Analytics: 검색 제안 선택
+  if (window.FengshuiAnalytics) {
+    window.FengshuiAnalytics.trackLocationMethod('suggestion', item.dataset.name);
+  }
 });
 
 document.addEventListener('click', (e) => {
@@ -240,6 +256,11 @@ document.querySelectorAll('.options:not(.multi) .option-btn').forEach(btn => {
     btn.classList.add('selected');
 
     answers[questionKey] = btn.dataset.value;
+
+    // Analytics: 선택지 트래킹
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.trackOptionSelected(questionKey, btn.dataset.value, screens[currentScreenIndex]);
+    }
 
     // 단독주택 선택 시 층수 화면에 확인 메시지 표시
     if (questionKey === 'houseType' && btn.dataset.value === 'house') {
@@ -316,6 +337,11 @@ document.querySelectorAll('.options.multi .option-btn').forEach(btn => {
 
     const selected = btn.closest('.options').querySelectorAll('.option-btn.selected');
     answers.companion = Array.from(selected).map(b => b.dataset.value);
+
+    // Analytics: 동거인 선택 트래킹
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.trackOptionSelected('companion', answers.companion.join('+'), 'screen-q5');
+    }
 
     const nextBtn = document.getElementById('btn-q5-next');
     if (answers.companion.length > 0) {
@@ -425,7 +451,7 @@ function showResult() {
               <div class="tip-product-pair">
                 <p class="tip">${t}</p>
                 ${p ? `<a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
-                  <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+                  ${p.image ? `<img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
                   <div class="product-info">
                     <span class="product-name">${p.name}</span>
                     <span class="product-price">${p.price}</span>
@@ -485,6 +511,11 @@ function showResult() {
 
   resultEl.dataset.typeId = type.id;
 
+  // Analytics: 결과 조회 + 퍼널 완료
+  if (window.FengshuiAnalytics) {
+    window.FengshuiAnalytics.trackResultViewed(type.id, type.name);
+  }
+
   goToScreen('screen-result');
 
   setTimeout(() => {
@@ -516,6 +547,9 @@ function bindShareButtons() {
       link.href = canvas.toDataURL();
       link.click();
       shareTracking.imageSaved = true;
+      if (window.FengshuiAnalytics) {
+        window.FengshuiAnalytics.trackShareAction('image_save', document.getElementById('screen-result').dataset.typeId);
+      }
       btn.textContent = '✅ 저장 완료!';
       setTimeout(() => { btn.textContent = '📸 결과 카드 저장하기'; }, 2000);
     } catch {
@@ -538,13 +572,16 @@ function bindShareButtons() {
   // KakaoTalk share
   document.getElementById('btn-share-kakao').addEventListener('click', () => {
     shareTracking.linkCopied = true;
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.trackShareAction('kakao', document.getElementById('screen-result').dataset.typeId);
+    }
     if (window.Kakao && Kakao.isInitialized()) {
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
           title: '🔮 우리 집 풍수 보기',
           description: getShareText(),
-          imageUrl: 'https://ohou.se/images/icon_ohouse.png',
+          imageUrl: '',
           link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() },
         },
         buttons: [{ title: '나도 해보기', link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() } }],
@@ -561,6 +598,9 @@ function bindShareButtons() {
   // X (Twitter) share
   document.getElementById('btn-share-x').addEventListener('click', () => {
     shareTracking.linkCopied = true;
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.trackShareAction('x', document.getElementById('screen-result').dataset.typeId);
+    }
     const text = encodeURIComponent(getShareText());
     const url = encodeURIComponent(getShareUrl());
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=550,height=420');
@@ -569,6 +609,9 @@ function bindShareButtons() {
   // Copy link
   document.getElementById('btn-copy-link').addEventListener('click', async () => {
     shareTracking.linkCopied = true;
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.trackShareAction('link_copy', document.getElementById('screen-result').dataset.typeId);
+    }
     const label = document.querySelector('#btn-copy-link .share-icon-label');
     await copyToClipboard(getShareUrl());
     label.textContent = '복사 완료!';
@@ -651,6 +694,10 @@ function bindFeedbackButtons() {
         });
 
         submitFeedback('match', null);
+        // Analytics: 피드백 match
+        if (window.FengshuiAnalytics) {
+          window.FengshuiAnalytics.trackFeedback('match', null, document.getElementById('screen-result').dataset.typeId);
+        }
 
       } else {
         followup.innerHTML = `
@@ -670,6 +717,10 @@ function bindFeedbackButtons() {
             const reason = reasonBtn.dataset.reason;
             followup.innerHTML = `<p class="feedback-response">${FEEDBACK_RESPONSES[reason]}</p>`;
             submitFeedback('mismatch', reason);
+            // Analytics: 피드백 mismatch + 사유
+            if (window.FengshuiAnalytics) {
+              window.FengshuiAnalytics.trackFeedback('mismatch', reason, document.getElementById('screen-result').dataset.typeId);
+            }
           });
         });
       }
