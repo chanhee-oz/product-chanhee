@@ -178,28 +178,84 @@
 
 ## 4. 프로토타입 범위
 
-### 포함 (MVP)
+### 포함 (MVP → 현재 구현 완료)
 - 인트로 화면 + 5단계 질문 흐름 (선택형, 자동 전환)
 - 위치: GPS 현재 위치 + 동네 검색
 - 12가지 풍수 유형 결과
 - 풍수 해설 (입력 항목별 근거 설명)
-- 에너지 리딩 (활력/안정/풍요 바 그래프)
-- 개선 팁 1~2개 (상품 링크 없이 자연스러운 제안)
-- 결과 이미지 저장 + 링크 공유 + URL 복사
+- 에너지 리딩 (활력/안정/풍요 바 그래프, 최솟값 50%)
+- 개선 팁 2개 + 연결 상품 추천 (오늘의집 검색 URL)
+- 결과 이미지 저장 + 링크 공유(카카오/X/링크복사) + URL 복사
 - 모바일 퍼스트 반응형 디자인
+- 피드백 수집 (Google Form 백그라운드 전송)
+- 행동 데이터 트래킹 (Vercel Analytics + PostHog + GA4)
 
-### 제외
-- 지도에서 직접 찍기 (추후 추가)
-- 카카오톡 공유 SDK 연동 (URL 복사로 대체)
+### 2차 확장 (2026-04-12 완료)
+- **상품 추천 확대**: 12유형별 맥락 맞는 상품 2개씩 (검색 URL + UTM 트래킹)
+- **companion 기반 보조 추천**: pet → 반려동물 인테리어, family → 키즈 인테리어 자동 추가
+- **매핑 로직 개선**: apartment/villa + family → mountain/fertile override 추가 (가장 흔한 조합 만족도 개선)
+- **에너지 최솟값 50%**: 어떤 조합이든 부정 인상 방지
+- **Q5 문구 개선**: "아이와 함께" → "가족과 함께" (성인자녀/부모님 포괄)
+- **카카오톡 SDK 활성화**: Kakao.init() 주석 해제 (JS키 교체 필요)
+- **Analytics 3중 트래킹**: Vercel Web Analytics + PostHog + GA4
+- **10개 커스텀 이벤트**: screen_view, screen_exit, option_selected, location_method, result_viewed, product_clicked, share_action, feedback_submitted, session_end, shared_link_view
+- **개인화 전략 문서**: 4가지 연결 방안 + Phase 1~3 로드맵
+- **피드백 분석 워크플로우**: 세그멘테이션/만족도/CTR 분석 프레임워크 + 주간 자동 리포트 scheduled task
+
+### 제외 (향후)
+- 카카오톡 JS키 발급 및 교체 (런칭 전 필수)
+- 지도에서 직접 찍기
 - 이사 좋은 날 받기 기능
-- 오늘의집 상품 직접 연결
-- 백엔드/데이터 저장 (모든 로직 프론트에서 처리)
-- 사용자 데이터 수집 서버
+- 백엔드/데이터 저장 서버
+- 오늘의집 OAuth 연동 (Phase 3)
+- ohou.se 서브도메인 이관 (Phase 2)
 
 ### 향후 확장 가능성
-- 카카오 공유, 지도 선택, 상품 추천 연동
-- 데이터 수집 서버 추가 → 고객 거주 정보 분석
+- 카카오 JS키 연동 완료 시 바이럴 본격 가동
+- Phase 1: UTM 기반 유입 추적 (현재 구현 완료)
+- Phase 2: ohou.se 도메인 이관 + localStorage 크로스세션 데이터 유지
+- Phase 3: OAuth 연동 + 유저 프로필에 주거 데이터 저장 → 검색/피드 개인화
 - 이사 좋은 날, 계절별 풍수 운세 등 콘텐츠 확장
+
+---
+
+## 5. 파일 구조 (현재)
+
+```
+product-chanhee/
+├── index.html          # HTML 구조 + GA4/PostHog/Vercel Analytics 스크립트
+├── style.css           # 모바일 퍼스트 반응형, 애니메이션
+├── app.js              # 흐름 제어, 결과 렌더링, 공유, 피드백, analytics 연결
+├── data.js             # 12개 풍수 유형 + 매핑 + 상품 추천 + 보조 추천 로직
+├── analytics.js        # Vercel + PostHog + GA4 이중 트래킹 모듈
+└── docs/
+    ├── personalization-strategy.md     # 개인화 연결 전략 (Phase 1~3)
+    ├── feedback-analysis-workflow.md   # 피드백 분석 자동화 설계
+    └── superpowers/
+        ├── plans/   # 구현 계획
+        └── specs/   # 디자인 스펙 (이 문서)
+```
+
+---
+
+## 6. 매핑 로직 상세 (2026-04-12 기준)
+
+### TYPE_MAPPING (방향 × 층수 → 유형)
+25개 조합을 12개 유형에 매핑. 기본 결과 결정.
+
+### HOUSE_OVERRIDES (집형태 × 동거인 → 유형 덮어쓰기)
+특정 조합에서 더 직관적인 결과를 위해 기본 매핑을 override:
+- `house_family` → mountain (단독주택 + 가족 = 안정)
+- `house_pet` → forest (단독주택 + 반려동물 = 치유)
+- `oneroom_alone` → moon (원룸 + 혼자 = 회복)
+- `apartment_family` → mountain (아파트 + 가족 = 안정) ← 2차 추가
+- `villa_family` → fertile (빌라 + 가족 = 풍요) ← 2차 추가
+
+### COMPANION_MODIFIERS (동거인 → 에너지 보정)
+동거인별로 활력/안정/풍요에 ±5~10 보정. 최솟값 50, 최댓값 100.
+
+### bonusProducts (동거인 → 보조 상품 추천)
+pet 포함 시 반려동물 인테리어 상품 추가, family 포함 시 키즈 인테리어 상품 추가.
 
 ---
 
@@ -208,4 +264,4 @@
 - 오늘의집 브랜드 톤 (깔끔, 모던) + MBTI 테스트 같은 캐주얼 바이럴 감성
 - ~해요 체, 친근하고 가벼운 말투
 - 이모지 적극 활용
-- 모든 결과는 긍정적, 부정적 표현 없음
+- 모든 결과는 긍정적, 부정적 표현 없음 (에너지 최솟값 50% 보장)
