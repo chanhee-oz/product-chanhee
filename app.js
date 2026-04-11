@@ -465,7 +465,7 @@ function showResult() {
           ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(type.tips.length).map(p => `
             <div class="tip-product-pair">
               <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
-                <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+                ${p.image ? `<img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
                   <span class="product-price">${p.price}</span>
@@ -581,7 +581,6 @@ function bindShareButtons() {
         content: {
           title: '🔮 우리 집 풍수 보기',
           description: getShareText(),
-          imageUrl: '',
           link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() },
         },
         buttons: [{ title: '나도 해보기', link: { mobileWebUrl: getShareUrl(), webUrl: getShareUrl() } }],
@@ -794,7 +793,7 @@ function submitFeedback(match, reason) {
           <div class="product-cards">
             ${(PRODUCT_RECOMMENDATIONS[type.id] || []).slice(0, 2).map(p => `
               <a class="product-card" href="${p.productUrl}" target="_blank" rel="noopener">
-                <img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+                ${p.image ? `<img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
                 <div class="product-info">
                   <span class="product-name">${p.name}</span>
                   <span class="product-price">${p.price}</span>
@@ -815,6 +814,11 @@ function submitFeedback(match, reason) {
 
     document.getElementById('screen-intro').classList.remove('active');
     resultEl.classList.add('active');
+
+    // Analytics: 공유 링크로 진입한 방문 추적
+    if (window.FengshuiAnalytics) {
+      window.FengshuiAnalytics.track('shared_link_view', { type_id: sharedType, type_name: type.name });
+    }
 
     setTimeout(() => {
       resultEl.querySelectorAll('.energy-fill').forEach(bar => {

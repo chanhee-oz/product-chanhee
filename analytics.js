@@ -33,14 +33,13 @@
     // Vercel Web Analytics 커스텀 이벤트
     // va.track()은 Vercel Analytics 스크립트가 로드되면 자동으로 사용 가능
     if (typeof window.va === 'function') {
-      // Vercel Analytics는 flat string/number 값만 지원
       const vaParams = {};
       for (const [k, v] of Object.entries(params || {})) {
         if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
           vaParams[k] = String(v);
         }
       }
-      window.va('event', { name: eventName, ...vaParams });
+      window.va('event', { name: eventName, data: vaParams });
     }
 
     // GA4 gtag 이벤트
@@ -167,13 +166,20 @@
     });
   }
 
+  let dropOffSent = false;
+  function safeTrackDropOff() {
+    if (dropOffSent) return;
+    dropOffSent = true;
+    trackDropOff();
+  }
+
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-      trackDropOff();
+      safeTrackDropOff();
     }
   });
 
-  window.addEventListener('beforeunload', trackDropOff);
+  window.addEventListener('beforeunload', safeTrackDropOff);
 
   // === 9. Auto-bind: Product Card Clicks (event delegation) ===
   document.addEventListener('click', (e) => {
