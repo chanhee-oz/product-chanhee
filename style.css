@@ -941,6 +941,72 @@ body {
   background: #F0FBFF;
 }
 
+/* === Ohouse CTA Section === */
+.ohouse-cta-section {
+  width: 100%;
+  margin-top: 28px;
+}
+
+.ohouse-cta-card {
+  background: linear-gradient(135deg, #35C5F0 0%, #2196B8 100%);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  color: white;
+}
+
+.ohouse-cta-emoji {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.ohouse-cta-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ohouse-cta-desc {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.ohouse-cta-desc strong {
+  color: #FFF;
+  font-weight: 700;
+}
+
+.ohouse-cta-btn {
+  display: inline-block;
+  background: white;
+  color: #35C5F0;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 280px;
+}
+
+.ohouse-cta-btn:active {
+  transform: scale(0.97);
+}
+
+.ohouse-cta-sub {
+  margin-top: 14px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.ohouse-cta-sub a {
+  color: white;
+  text-decoration: underline;
+}
+
 /* === Responsive: Desktop === */
 @media (min-width: 481px) {
   body {

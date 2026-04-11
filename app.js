@@ -511,6 +511,18 @@ function showResult() {
       <button class="btn-primary" id="btn-retry">🔮 다시 해보기</button>
     </div>
 
+    <div class="ohouse-cta-section">
+      <div class="ohouse-cta-card">
+        <p class="ohouse-cta-emoji">🎁</p>
+        <p class="ohouse-cta-title">오늘의집에서 우리 집 꾸미기</p>
+        <p class="ohouse-cta-desc">지금 가입하면 <strong>5,000원 할인 쿠폰</strong>을 드려요!</p>
+        <a class="ohouse-cta-btn" id="btn-ohouse-signup" href="#" target="_blank" rel="noopener">
+          오늘의집 시작하기 →
+        </a>
+        <p class="ohouse-cta-sub">이미 회원이신가요? <a id="btn-ohouse-login" href="#" target="_blank" rel="noopener">로그인하기</a></p>
+      </div>
+    </div>
+
     <div class="feedback-section" id="feedback-section">
       <p class="feedback-question">이 결과, 우리 집이랑 어울려요?</p>
       <div class="feedback-buttons">
@@ -538,6 +550,80 @@ function showResult() {
 
   bindShareButtons();
   bindFeedbackButtons();
+  bindOhouseCTA(type.id);
+}
+
+// === Ohouse Login/Signup CTA with Data Handoff ===
+function buildOhouseDataPayload(typeId) {
+  // 풍수 진단 데이터를 base64 인코딩하여 URL-safe하게 전달
+  const payload = {
+    fs_type: typeId,
+    fs_direction: answers.direction,
+    fs_floor: answers.floor,
+    fs_house: answers.houseType,
+    fs_companion: answers.companion.join(','),
+    fs_location: answers.location?.name || '',
+    fs_timestamp: new Date().toISOString(),
+  };
+  // base64url 인코딩 (URL 파라미터에 안전)
+  const jsonStr = JSON.stringify(payload);
+  const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+  return encoded;
+}
+
+function buildOhouseUrl(path, typeId) {
+  const dataPayload = buildOhouseDataPayload(typeId);
+  const utmParams = `utm_source=fengshui&utm_medium=result_cta&utm_campaign=${typeId}`;
+  // fs_data 파라미터로 풍수 데이터 전달 — 오늘의집 서버에서 디코딩하여 유저 프로필에 저장
+  return `https://ohou.se/${path}?${utmParams}&fs_data=${encodeURIComponent(dataPayload)}`;
+}
+
+function bindOhouseCTA(typeId) {
+  const signupBtn = document.getElementById('btn-ohouse-signup');
+  const loginBtn = document.getElementById('btn-ohouse-login');
+
+  if (signupBtn) {
+    signupBtn.href = buildOhouseUrl('users/sign_up', typeId);
+    signupBtn.addEventListener('click', () => {
+      // localStorage에도 저장 — 오늘의집이 같은 도메인이 되면 읽을 수 있음 (Phase 2)
+      try {
+        localStorage.setItem('fengshui_data', JSON.stringify({
+          type: typeId,
+          direction: answers.direction,
+          floor: answers.floor,
+          houseType: answers.houseType,
+          companion: answers.companion,
+          location: answers.location?.name || '',
+          timestamp: new Date().toISOString(),
+        }));
+      } catch (e) { /* localStorage 불가 환경 무시 */ }
+
+      if (window.FengshuiAnalytics) {
+        window.FengshuiAnalytics.track('ohouse_cta_clicked', { action: 'signup', type_id: typeId });
+      }
+    });
+  }
+
+  if (loginBtn) {
+    loginBtn.href = buildOhouseUrl('users/sign_in', typeId);
+    loginBtn.addEventListener('click', () => {
+      try {
+        localStorage.setItem('fengshui_data', JSON.stringify({
+          type: typeId,
+          direction: answers.direction,
+          floor: answers.floor,
+          houseType: answers.houseType,
+          companion: answers.companion,
+          location: answers.location?.name || '',
+          timestamp: new Date().toISOString(),
+        }));
+      } catch (e) { /* localStorage 불가 환경 무시 */ }
+
+      if (window.FengshuiAnalytics) {
+        window.FengshuiAnalytics.track('ohouse_cta_clicked', { action: 'login', type_id: typeId });
+      }
+    });
+  }
 }
 
 // === Bind Share Buttons ===
