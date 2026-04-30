@@ -1,0 +1,425 @@
+import { readdir, writeFile, access } from 'fs/promises';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, '..');
+const SHOTS = join(ROOT, 'screenshots');
+
+const SCREEN_LABELS = {
+  '01-intro': '인트로',
+  '02-q1-location': 'Q1 — 위치',
+  '03-q2-house-type': 'Q2 — 집 형태',
+  '04-q3-floor': 'Q3 — 층수',
+  '05-q4-direction': 'Q4 — 방향',
+  '06-q5-companion': 'Q5 — 동거인',
+  '07-result': '결과',
+};
+
+async function exists(p) {
+  try { await access(p); return true; } catch { return false; }
+}
+
+async function main() {
+  const beforeDir = join(SHOTS, 'before');
+  const afterDir = join(SHOTS, 'after');
+
+  if (!(await exists(beforeDir)) || !(await exists(afterDir))) {
+    console.error('❌ before/ 또는 after/ 폴더가 없어요. snapshot:before, snapshot:after 먼저 실행하세요.');
+    process.exit(1);
+  }
+
+  const viewports = ['mobile', 'desktop'];
+
+  // Markdown 비교 (옵션, 깃허브 등에서 보기용)
+  const mdLines = ['# Before / After 비교', ''];
+  for (const vp of viewports) {
+    mdLines.push(`## ${vp.toUpperCase()}`, '');
+    const files = (await readdir(join(beforeDir, vp))).filter(f => f.endsWith('.png')).sort();
+    mdLines.push('| 화면 | Before | After |');
+    mdLines.push('|---|---|---|');
+    for (const f of files) {
+      const name = f.replace('.png', '');
+      const label = SCREEN_LABELS[name] || name;
+      mdLines.push(`| ${label} | ![${label}](./before/${vp}/${f}) | ![${label}](./after/${vp}/${f}) |`);
+    }
+    mdLines.push('');
+  }
+  await writeFile(join(SHOTS, 'comparison.md'), mdLines.join('\n'), 'utf-8');
+
+  // 인터랙티브 HTML 비교
+  const screens = (await readdir(join(beforeDir, 'mobile'))).filter(f => f.endsWith('.png')).sort();
+  const screenData = screens.map(f => {
+    const id = f.replace('.png', '');
+    return { id, label: SCREEN_LABELS[id] || id, file: f };
+  });
+
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before / After 비교 — 풍수지리 랜딩</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-weak: #f5f5f5;
+    --bg-inverse: #141414;
+    --bg-brand: #00a1ff;
+    --bg-brand-weak: #f0f8fc;
+    --border: #e0e0e0;
+    --fg: #141414;
+    --fg-weak: #8c8c8c;
+    --fg-brand: #00a1ff;
+    --fg-inverse: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    letter-spacing: -0.3px;
+    background: var(--bg-weak);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+  }
+  h1 { font-size: 18px; font-weight: 700; }
+  h1 .meta { font-size: 13px; font-weight: 500; color: var(--fg-weak); margin-left: 8px; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toggle-group {
+    display: inline-flex;
+    background: var(--bg-weak);
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .toggle-group button {
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--fg-weak);
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .toggle-group button.active {
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: 0 1px 2px #00000010;
+  }
+  main { padding: 32px 24px 64px; max-width: 1600px; margin: 0 auto; }
+  .screen-block {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 5px 0 #3F474D0D;
+  }
+  .screen-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .screen-title .num {
+    background: var(--bg-brand-weak);
+    color: var(--fg-brand);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .compare-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .compare-col-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--fg-weak);
+    text-align: center;
+  }
+  .compare-col-label.before { color: var(--fg-weak); }
+  .compare-col-label.after { color: var(--fg-brand); }
+  .img-wrap {
+    background: var(--bg-weak);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+    min-height: 200px;
+  }
+  .img-wrap img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 #3F474D26;
+  }
+  .img-wrap.mobile img {
+    max-width: 320px;
+  }
+  .compare-row.slider {
+    grid-template-columns: 1fr;
+  }
+  .slider-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--bg-weak);
+  }
+  .slider-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .slider-after {
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%;
+    overflow: hidden;
+    border-right: 2px solid var(--bg-brand);
+  }
+  .slider-after img {
+    width: 200%;
+    max-width: none;
+  }
+  .slider-handle {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: var(--bg-brand);
+    cursor: ew-resize;
+  }
+  .slider-handle::after {
+    content: '⇆';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px; height: 32px;
+    background: var(--bg-brand);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .summary {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 5px 0 #3F474D0D;
+  }
+  .summary h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .summary table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .summary th, .summary td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary th {
+    background: var(--bg-weak);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .summary tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill.before { background: var(--bg-weak); color: var(--fg-weak); }
+  .pill.after { background: var(--bg-brand-weak); color: var(--fg-brand); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>풍수지리 랜딩 — Before / After<span class="meta">OHOUSE Design System v0.4.2 적용 비교</span></h1>
+    <div class="controls">
+      <div class="toggle-group" id="vp-toggle">
+        <button data-vp="mobile" class="active">📱 Mobile</button>
+        <button data-vp="desktop">🖥 Desktop</button>
+      </div>
+      <div class="toggle-group" id="mode-toggle">
+        <button data-mode="side" class="active">Side-by-side</button>
+        <button data-mode="slider">Slider</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="summary">
+      <h2>주요 변경 사항</h2>
+      <table>
+        <thead><tr><th>항목</th><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td>브랜드 컬러</td><td><span class="pill before">#35C5F0</span></td><td><span class="pill after">#00a1ff (ODS brand)</span></td></tr>
+          <tr><td>폰트</td><td><span class="pill before">시스템 폰트</span></td><td><span class="pill after">Pretendard Variable</span></td></tr>
+          <tr><td>Letter spacing</td><td><span class="pill before">기본</span></td><td><span class="pill after">-0.3px 전역</span></td></tr>
+          <tr><td>Foreground 텍스트</td><td><span class="pill before">#222 / #888</span></td><td><span class="pill after">#141414 / #8c8c8c</span></td></tr>
+          <tr><td>Border</td><td><span class="pill before">2px #E5E5E5</span></td><td><span class="pill after">1px #e0e0e0</span></td></tr>
+          <tr><td>Border radius</td><td><span class="pill before">12 / 14 / 16 / 20px</span></td><td><span class="pill after">8 / 12 / 16 (토큰)</span></td></tr>
+          <tr><td>Shadow</td><td><span class="pill before">임의값</span></td><td><span class="pill after">depth_10 / 20 / 30</span></td></tr>
+          <tr><td>오늘의집 CTA</td><td><span class="pill before">시안 그라디언트</span></td><td><span class="pill after">brand-solid #00a1ff</span></td></tr>
+          <tr><td>인트로 배경</td><td><span class="pill before">파스텔 그라디언트</span></td><td><span class="pill after">화이트 베이스</span></td></tr>
+          <tr><td>Spacing</td><td><span class="pill before">임의값</span></td><td><span class="pill after">4px 배수 토큰</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="screens">
+${screenData.map((s, i) => `
+      <div class="screen-block">
+        <div class="screen-title">
+          <span class="num">${i + 1} / ${screenData.length}</span>
+          <span>${s.label}</span>
+        </div>
+        <div class="compare-row" data-screen="${s.id}">
+          <div class="compare-col">
+            <div class="compare-col-label before">BEFORE</div>
+            <div class="img-wrap mobile" data-vp="mobile"><img src="./before/mobile/${s.file}" alt="before mobile ${s.label}"></div>
+            <div class="img-wrap desktop" data-vp="desktop" style="display:none"><img src="./before/desktop/${s.file}" alt="before desktop ${s.label}"></div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-col-label after">AFTER</div>
+            <div class="img-wrap mobile" data-vp="mobile"><img src="./after/mobile/${s.file}" alt="after mobile ${s.label}"></div>
+            <div class="img-wrap desktop" data-vp="desktop" style="display:none"><img src="./after/desktop/${s.file}" alt="after desktop ${s.label}"></div>
+          </div>
+        </div>
+      </div>
+`).join('')}
+    </div>
+  </main>
+
+<script>
+  const vpButtons = document.querySelectorAll('#vp-toggle button');
+  const modeButtons = document.querySelectorAll('#mode-toggle button');
+  let currentVp = 'mobile';
+  let currentMode = 'side';
+
+  function applyVp() {
+    document.querySelectorAll('.img-wrap').forEach(el => {
+      el.style.display = el.dataset.vp === currentVp ? '' : 'none';
+    });
+  }
+
+  function applyMode() {
+    document.querySelectorAll('.compare-row').forEach(row => {
+      const sid = row.dataset.screen;
+      if (currentMode === 'slider') {
+        row.classList.add('slider');
+        if (!row.querySelector('.slider-wrap')) {
+          const wrap = document.createElement('div');
+          wrap.className = 'slider-wrap';
+          wrap.innerHTML = \`
+            <img src="./before/\${currentVp}/\${sid}.png" alt="before">
+            <div class="slider-after"><img src="./after/\${currentVp}/\${sid}.png" alt="after"></div>
+            <div class="slider-handle"></div>
+          \`;
+          // hide the side-by-side cols
+          row.querySelectorAll('.compare-col').forEach(c => c.style.display = 'none');
+          row.appendChild(wrap);
+          initSlider(wrap);
+        } else {
+          // refresh imgs on vp change
+          const beforeImg = row.querySelector('.slider-wrap > img');
+          const afterImg = row.querySelector('.slider-after img');
+          beforeImg.src = \`./before/\${currentVp}/\${sid}.png\`;
+          afterImg.src = \`./after/\${currentVp}/\${sid}.png\`;
+        }
+      } else {
+        row.classList.remove('slider');
+        row.querySelectorAll('.compare-col').forEach(c => c.style.display = '');
+        const w = row.querySelector('.slider-wrap');
+        if (w) w.remove();
+      }
+    });
+  }
+
+  function initSlider(wrap) {
+    const after = wrap.querySelector('.slider-after');
+    const handle = wrap.querySelector('.slider-handle');
+    const afterImg = after.querySelector('img');
+    let dragging = false;
+
+    function move(x) {
+      const rect = wrap.getBoundingClientRect();
+      let pct = ((x - rect.left) / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      after.style.width = pct + '%';
+      handle.style.left = pct + '%';
+      afterImg.style.width = (100 / pct * 100) + '%';
+    }
+
+    handle.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+    document.addEventListener('mousemove', e => { if (dragging) move(e.clientX); });
+    document.addEventListener('mouseup', () => { dragging = false; });
+    handle.addEventListener('touchstart', e => { dragging = true; });
+    document.addEventListener('touchmove', e => { if (dragging) move(e.touches[0].clientX); });
+    document.addEventListener('touchend', () => { dragging = false; });
+
+    // 초기값 (50%)
+    afterImg.addEventListener('load', () => {
+      afterImg.style.width = '200%';
+    });
+  }
+
+  vpButtons.forEach(b => b.addEventListener('click', () => {
+    vpButtons.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentVp = b.dataset.vp;
+    applyVp();
+    if (currentMode === 'slider') applyMode();
+  }));
+
+  modeButtons.forEach(b => b.addEventListener('click', () => {
+    modeButtons.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentMode = b.dataset.mode;
+    applyMode();
+  }));
+</script>
+</body>
+</html>`;
+
+  await writeFile(join(SHOTS, 'comparison.html'), html, 'utf-8');
+
+  console.log(`✅ 비교 페이지 생성:`);
+  console.log(`   - ${join(SHOTS, 'comparison.html')} (인터랙티브 HTML)`);
+  console.log(`   - ${join(SHOTS, 'comparison.md')} (마크다운)`);
+  console.log(`\n💡 HTML 보려면: 브라우저로 screenshots/comparison.html 열기`);
+}
+
+main().catch(err => { console.error(err); process.exit(1); });

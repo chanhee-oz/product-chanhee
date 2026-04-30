@@ -1,0 +1,6 @@
+.vercel
+node_modules/
+.claude/
+.superpowers/
+_thread_decoded.txt
+*.pptx

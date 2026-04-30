@@ -1,0 +1,15 @@
+{
+  "name": "product-chanhee",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "snapshot:before": "node scripts/snapshot.mjs before",
+    "snapshot:after": "node scripts/snapshot.mjs after",
+    "snapshot:diff": "node scripts/diff.mjs",
+    "compare": "node scripts/compare.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}

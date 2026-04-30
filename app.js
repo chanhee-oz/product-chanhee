@@ -489,6 +489,18 @@ function showResult() {
           `).join('')}
         </div>
       </div>
+
+      <div class="ohouse-cta-section">
+        <div class="ohouse-cta-card">
+          <p class="ohouse-cta-badge">🎁 신규 회원 혜택</p>
+          <p class="ohouse-cta-title">풍수 팁에 맞는 아이템,<br>오늘의집에서 찾아보세요</p>
+          <p class="ohouse-cta-desc">지금 가입하면 <strong>웰컴 쿠폰</strong>을 드려요!</p>
+          <a class="ohouse-cta-btn" id="btn-ohouse-signup" href="#" target="_blank" rel="noopener">
+            오늘의집 가입하고 혜택 받기 →
+          </a>
+          <p class="ohouse-cta-sub">이미 회원이신가요? <a id="btn-ohouse-login" href="#" target="_blank" rel="noopener">로그인해서 바로 쇼핑하기</a></p>
+        </div>
+      </div>
     </div>
 
     <div class="share-section">
@@ -509,18 +521,6 @@ function showResult() {
       </div>
       <button class="share-btn" id="btn-save-image">📸 결과 카드 저장하기</button>
       <button class="btn-primary" id="btn-retry">🔮 다시 해보기</button>
-    </div>
-
-    <div class="ohouse-cta-section">
-      <div class="ohouse-cta-card">
-        <p class="ohouse-cta-emoji">🎁</p>
-        <p class="ohouse-cta-title">오늘의집에서 우리 집 꾸미기</p>
-        <p class="ohouse-cta-desc">지금 가입하면 <strong>5,000원 할인 쿠폰</strong>을 드려요!</p>
-        <a class="ohouse-cta-btn" id="btn-ohouse-signup" href="#" target="_blank" rel="noopener">
-          오늘의집 시작하기 →
-        </a>
-        <p class="ohouse-cta-sub">이미 회원이신가요? <a id="btn-ohouse-login" href="#" target="_blank" rel="noopener">로그인하기</a></p>
-      </div>
     </div>
 
     <div class="feedback-section" id="feedback-section">
